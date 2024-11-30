@@ -1,3 +1,7 @@
+/*
+Javascript proxy for the midserver java library
+*/
+
 var FortegraUtil = Class.create();
 
 FortegraUtil.prototype = {
