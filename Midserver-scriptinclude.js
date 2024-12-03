@@ -34,5 +34,17 @@ FortegraUtil.prototype = {
 		return pgpObj;
     },
 
+    transferPayment: function() {
+
+        this.imsConnectionString = probe.getParameter("imsConnectionString");
+        this.respayid = probe.getParameter("respayid");
+        this.userguid = probe.getParameter("userguid");
+        var pgpObj = new this.Pgp().invoke_spClaims_TransferPayment(
+                                                    this.imsConnectionString,
+                                                    this.respayid,
+                                                    this.userguid);
+        return pgpObj;
+    },
+
     type: FortegraUtil
 };

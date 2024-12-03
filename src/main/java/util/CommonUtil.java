@@ -44,12 +44,61 @@ public class CommonUtil {
     /*
      Calls Stored Procedure - spClaims_TransferPayment
      */
-    public int invoke_spClaims_TransferPayment(
-            String storedProcName,
+    public String invoke_spClaims_TransferPayment(
+            String imsConnectionString,
             int resPayId,
-            Date postdate){
+            String userguid) throws SQLException {
+        JSONObject overlAllResult = new JSONObject();
+        try  {
+            Connection connection = DriverManager.getConnection(imsConnectionString);
+            connection.setAutoCommit(false);
 
-        return 1;
+            PreparedStatement pstmt_tran =
+                    connection.prepareStatement("BEGIN TRAN");
+            pstmt_tran.execute();
+            overlAllResult.put("Progress1", "Transaction Started...");
+
+            int bankgl = 0;
+            PreparedStatement pstmt_bankgl =
+                    connection.prepareStatement("select top 1 BankAccountId from Fortegra_tblClaims_TransferSettings \n" +
+                            "where GLCompanyId = (SELECT SettingNumericValue FROM dbo.tblClaims_Settings WHERE SettingAutomationCode = 'GLCO')");
+            ResultSet rs = pstmt_bankgl.executeQuery();
+            while (rs.next()) {
+                bankgl = rs.getInt("BankAccountId");
+                break;
+            }
+            overlAllResult.put("Progress2", "Bank GL Retrieved...-"+bankgl);
+
+            PreparedStatement pstmt =
+                    connection.prepareStatement(
+                            "{call dbo.spClaims_TransferPayment(?,?,?)}"
+                    );
+            if(bankgl > 0) {
+                pstmt.setInt(1, resPayId);
+                pstmt.setString(2, userguid);
+                pstmt.setInt(3, bankgl);
+                pstmt.execute();
+                overlAllResult.put("Progress3", "Called Stored Procedure...");
+            }
+
+            PreparedStatement pstmt_commit =
+                    connection.prepareStatement("COMMIT");
+            pstmt_commit.execute();
+            overlAllResult.put("Progress4", "Commited Transaction...");
+
+            connection.commit();
+            pstmt_tran.close();
+            pstmt_bankgl.close();
+            pstmt.close();
+            pstmt_commit.close();
+            connection.close();
+        }
+        catch (Exception e){
+            overlAllResult.put("Error",e.getMessage());
+            overlAllResult.put("Error-StackTrace",e.getStackTrace());
+        }
+
+        return overlAllResult.toString();
     }
 
     /*
@@ -102,6 +151,7 @@ public class CommonUtil {
                 //Send to sharepoint
                 File dir = new File(tempPath+documentStoreGUID);
                 File[] directoryListing = dir.listFiles();
+                overlAllResult.put("Progress1",  "listing files from "+tempPath+documentStoreGUID);
                 if (directoryListing != null) {
                     for (File child : directoryListing) {
                         String filename = child.getName().replaceAll("[^a-zA-Z0-9\\.\\-]", "_");
@@ -111,7 +161,9 @@ public class CommonUtil {
                         putRequest_data.setHeader("Authorization", "Bearer " + sharepointToken);
                         putRequest_data.setEntity(new FileEntity(child));
                         HttpClient client_data = HttpClientBuilder.create().build();
+                        overlAllResult.put("Progress2",  "sending file to sharepoint. File name:"+filename);
                         HttpResponse response_data = client_data.execute(putRequest_data);
+                        overlAllResult.put("Progress3",  "sent to sharepoint. File name:"+filename);
                         String json_data = EntityUtils.toString(response_data.getEntity());
                         JSONObject jsonObject = new JSONObject(json_data);
                         overlAllResult.put("fileid",  jsonObject.get("id"));
@@ -142,6 +194,8 @@ public class CommonUtil {
                 }
                 overlAllResult.put("Sharepoint Status",  "File Stored in sharepoint...");
             }
+            connection.close();
+
         }
         catch (SQLException e) {
             overlAllResult.put("Exception",e.getMessage());
