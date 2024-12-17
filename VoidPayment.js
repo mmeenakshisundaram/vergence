@@ -1,15 +1,17 @@
 /*
-Action name: Util-JDBC-TransferPayment
+Action name: Util-JDBC-VoidPayment
 Application: Global
-input: IMSConnectionString, respayid, userguid
+input: IMSConnectionString, respayid, userguid, midservername
 output: Resp_Payload
 */
 
 var probe = new JavascriptProbe(inputs.midservername);
-probe.setName("IMS_TransferPayment");
-probe.setJavascript("var pdf = new FortegraUtil(); res = pdf.transferPayment();");
+probe.setName("IMS_voidPayment");
+probe.setJavascript("var pdf = new FortegraUtil(); res = pdf.voidPayment();");
 probe.addParameter("imsConnectionString",inputs.imsConnectionString);
 probe.addParameter("respayid", inputs.respayid );
+probe.addParameter("claimid", inputs.claimid );
+probe.addParameter("claimantguid", inputs.claimantguid );
 probe.addParameter("userguid", inputs.userguid);
 var strOutputEccId = probe.create();
 

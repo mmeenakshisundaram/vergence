@@ -1,5 +1,6 @@
 package processor;
 
+import repository.PaymentRepository;
 import util.CommonUtil;
 import java.io.IOException;
 import java.sql.SQLException;
@@ -12,7 +13,6 @@ public class main {
     /*
         Test Case for transferdocument
      */
-
 //    CommonUtil cu = new CommonUtil();
 //    String token = cu.getAccessToken("client_credentials",
 //            "085249de-c6a7-4f50-95e8-5a5b3be09c64",
@@ -36,16 +36,31 @@ public class main {
         /*
         Test Case for invoke_spClaims_TransferPayment
         */
+//        String connectionUrl =
+//                "jdbc:sqlserver://MGADSTest01.ny.mgasystems.com:1433;"
+//                        + "database=Fortegra_Test;"
+//                        + "user=mperkins@fortegra.com_DBO;"
+//                        + "password=the2.sofa.chanted.a5.ragnet.relieves.a.sTump;";
+//        CommonUtil cu = new CommonUtil();
+//        cu.invoke_spClaims_TransferPayment(connectionUrl,
+//                4026,
+//                "15779D93-532B-424C-9399-04BF6CDF0739"
+//                );
+
+        /*
+        Test Case for Void
+         */
         String connectionUrl =
                 "jdbc:sqlserver://MGADSTest01.ny.mgasystems.com:1433;"
                         + "database=Fortegra_Test;"
                         + "user=mperkins@fortegra.com_DBO;"
                         + "password=the2.sofa.chanted.a5.ragnet.relieves.a.sTump;";
-        CommonUtil cu = new CommonUtil();
-        cu.invoke_spClaims_TransferPayment(connectionUrl,
-                4026,
-                "15779D93-532B-424C-9399-04BF6CDF0739"
-                );
+        PaymentRepository pr = new PaymentRepository();
+        String result = pr.invoke_spClaims_InsertVoidPayment(connectionUrl,
+                304427,19672,
+                "15FD715F-7C52-45D9-8625-B1D3796B8A65",
+                "15779D93-532B-424C-9399-04BF6CDF0739");
+
     }
 
 }

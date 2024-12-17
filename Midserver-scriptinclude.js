@@ -8,6 +8,7 @@ FortegraUtil.prototype = {
 
     initialize: function() {
         this.Pgp = Packages.util.CommonUtil;
+        this.Pgp_PaymentRepo = Packages.repository.PaymentRepository;
     },
 
     getAccessToken: function() {
@@ -44,6 +45,21 @@ FortegraUtil.prototype = {
                                                     this.respayid,
                                                     this.userguid);
         return pgpObj;
+    },
+
+    voidPayment: function() {
+            this.imsConnectionString = probe.getParameter("imsConnectionString");
+            this.respayid = probe.getParameter("respayid");
+            this.claimid = probe.getParameter("claimid");
+            this.claimantguid = probe.getParameter("claimantguid");
+            this.userguid = probe.getParameter("userguid");
+            var pgpObj = new this.Pgp_PaymentRepo().invoke_spClaims_InsertVoidPayment(
+                                                        this.imsConnectionString,
+                                                        this.respayid,
+                                                        this.claimid,
+                                                        this.claimantguid
+                                                        this.userguid);
+            return pgpObj;
     },
 
     type: FortegraUtil
