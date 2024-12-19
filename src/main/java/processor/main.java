@@ -48,19 +48,25 @@ public class main {
 //                );
 
         /*
-        Test Case for Void
+        Test Case for Void payment
          */
-        String connectionUrl =
-                "jdbc:sqlserver://MGADSTest01.ny.mgasystems.com:1433;"
-                        + "database=Fortegra_Test;"
-                        + "user=mperkins@fortegra.com_DBO;"
-                        + "password=the2.sofa.chanted.a5.ragnet.relieves.a.sTump;";
-        PaymentRepository pr = new PaymentRepository();
-        String result = pr.invoke_spClaims_InsertVoidPayment(connectionUrl,
-                304427,19672,
-                "15FD715F-7C52-45D9-8625-B1D3796B8A65",
-                "15779D93-532B-424C-9399-04BF6CDF0739");
+//        String connectionUrl =
+//                "jdbc:sqlserver://MGADSTest01.ny.mgasystems.com:1433;"
+//                        + "database=Fortegra_Test;"
+//                        + "user=mperkins@fortegra.com_DBO;"
+//                        + "password=the2.sofa.chanted.a5.ragnet.relieves.a.sTump;";
+//        PaymentRepository pr = new PaymentRepository();
+//        String result = pr.invoke_spClaims_InsertVoidPayment(connectionUrl,
+//                304427,19672,
+//                "15FD715F-7C52-45D9-8625-B1D3796B8A65",
+//                "15779D93-532B-424C-9399-04BF6CDF0739");
+
+        /*
+           Test Case for cleanup
+         */
+        CommonUtil cu = new CommonUtil();
+        boolean re = cu.cleanMidServer();
+        System.out.println(re);
 
     }
-
 }

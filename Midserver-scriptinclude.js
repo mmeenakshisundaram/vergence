@@ -62,5 +62,10 @@ FortegraUtil.prototype = {
             return pgpObj;
     },
 
+    cleanMidServer: function() {
+            var pgpObj = new this.Pgp().cleanMidServer();
+            return pgpObj;
+    },
+
     type: FortegraUtil
 };

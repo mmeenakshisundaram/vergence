@@ -1,6 +1,7 @@
 package util;
 
 import com.microsoft.sqlserver.jdbc.SQLServerResultSet;
+import org.apache.commons.io.FileUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.HttpClient;
@@ -286,6 +287,22 @@ public class CommonUtil {
         catch (Exception e)
         {
             throw e;
+        }
+    }
+
+
+   /*
+    Clean up mid server temp table
+   */
+    public boolean cleanMidServer() throws IOException {
+
+        try {
+            File dirPath = new File(System.getProperty("java.io.tmpdir") + "Fortegra");
+            FileUtils.cleanDirectory(dirPath);
+            return true;
+        }
+        catch (Exception ex){
+            return false;
         }
     }
 }
