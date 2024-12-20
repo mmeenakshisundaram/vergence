@@ -2,9 +2,11 @@
 To clean midserver temp folder
 */
 
-var probe = new JavascriptProbe(inputs.midservername);
+var probe = new JavascriptProbe("prod_mid_server");
 probe.setName("IMS_CleanMidServer");
 probe.setJavascript("var pdf = new FortegraUtil(); res = pdf.cleanMidServer();");
+probe.addParameter("foldername","Fortegra");
+probe.addParameter("isroot", true );
 var strOutputEccId = probe.create();
 
 var waitMS = 250000;

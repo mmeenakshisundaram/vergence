@@ -57,13 +57,15 @@ FortegraUtil.prototype = {
                                                         this.imsConnectionString,
                                                         this.respayid,
                                                         this.claimid,
-                                                        this.claimantguid
+                                                        this.claimantguid,
                                                         this.userguid);
             return pgpObj;
     },
 
     cleanMidServer: function() {
-            var pgpObj = new this.Pgp().cleanMidServer();
+            this.foldername = probe.getParameter("foldername");
+            this.isroot = probe.getParameter("isroot");
+            var pgpObj = new this.Pgp().cleanMidServer(this.foldername,this.isroot);
             return pgpObj;
     },
 

@@ -65,7 +65,7 @@ public class main {
            Test Case for cleanup
          */
         CommonUtil cu = new CommonUtil();
-        boolean re = cu.cleanMidServer();
+        String re = cu.cleanMidServer("Fortegra",true);
         System.out.println(re);
 
     }
