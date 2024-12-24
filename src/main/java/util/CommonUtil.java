@@ -21,86 +21,25 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.sql.*;
-import java.util.ArrayList;
+import java.util.*;
 import java.util.Date;
-import java.util.Enumeration;
-import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
 public class CommonUtil {
 
+    public static HashMap<String,String> appConfig;
+
+    static {
+        appConfig = new HashMap<String,String>();
+        appConfig.put("test_imsconnectionstring","jdbc:sqlserver://MGADSTest01.ny.mgasystems.com:1433;database=Fortegra_Test;user=mperkins@fortegra.com_DBO;password=the2.sofa.chanted.a5.ragnet.relieves.a.sTump;");
+        appConfig.put("prod_imsconnectionstring","jdbc:sqlserver://MGADS0002-NJ.NY.MGASYSTEMS.COM:1433;database=Fortegra;user=svc_acct_ims_prod;password=a.yin.snorTed.the2.devil3.popped.the.plaything;");
+    }
+
     /*
      Default Constructor
      */
     public CommonUtil(){
-    }
-
-    /*
-     Test Method
-     */
-    public String Test(String param){
-        return "Hello"+param;
-    }
-
-    /*
-     Calls Stored Procedure - spClaims_TransferPayment
-     */
-    public String invoke_spClaims_TransferPayment(
-            String imsConnectionString,
-            int resPayId,
-            String userguid) throws SQLException {
-        JSONObject overlAllResult = new JSONObject();
-        try  {
-            Connection connection = DriverManager.getConnection(imsConnectionString);
-            connection.setAutoCommit(false);
-
-            PreparedStatement pstmt_tran =
-                    connection.prepareStatement("BEGIN TRAN");
-            pstmt_tran.execute();
-            overlAllResult.put("Progress1", "Transaction Started...");
-
-            int bankgl = 0;
-            PreparedStatement pstmt_bankgl =
-                    connection.prepareStatement("select top 1 BankAccountId from Fortegra_tblClaims_TransferSettings \n" +
-                            "where GLCompanyId = (SELECT SettingNumericValue FROM dbo.tblClaims_Settings WHERE SettingAutomationCode = 'GLCO')");
-            ResultSet rs = pstmt_bankgl.executeQuery();
-            while (rs.next()) {
-                bankgl = rs.getInt("BankAccountId");
-                break;
-            }
-            overlAllResult.put("Progress2", "Bank GL Retrieved...-"+bankgl);
-
-            PreparedStatement pstmt =
-                    connection.prepareStatement(
-                            "{call dbo.spClaims_TransferPayment(?,?,?)}"
-                    );
-            if(bankgl > 0) {
-                pstmt.setInt(1, resPayId);
-                pstmt.setString(2, userguid);
-                pstmt.setInt(3, bankgl);
-                pstmt.execute();
-                overlAllResult.put("Progress3", "Called Stored Procedure...");
-            }
-
-            PreparedStatement pstmt_commit =
-                    connection.prepareStatement("COMMIT");
-            pstmt_commit.execute();
-            overlAllResult.put("Progress4", "Commited Transaction...");
-
-            connection.commit();
-            pstmt_tran.close();
-            pstmt_bankgl.close();
-            pstmt.close();
-            pstmt_commit.close();
-            connection.close();
-        }
-        catch (Exception e){
-            overlAllResult.put("Error",e.getMessage());
-            overlAllResult.put("Error-StackTrace",e.getStackTrace());
-        }
-
-        return overlAllResult.toString();
     }
 
     /*
@@ -291,10 +230,9 @@ public class CommonUtil {
         }
     }
 
-
-   /*
-    Clean up mid server temp table
-   */
+    /*
+     Clean up mid server temp table
+    */
     public String cleanMidServer() throws IOException
     {
         //String foldername, boolean isroot
