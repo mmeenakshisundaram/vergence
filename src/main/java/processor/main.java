@@ -3,6 +3,7 @@ package processor;
 import repository.PaymentRepository;
 import util.CommonUtil;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Hashtable;
@@ -58,10 +59,40 @@ public class main {
                         + "user=mperkins@fortegra.com_DBO;"
                         + "password=the2.sofa.chanted.a5.ragnet.relieves.a.sTump;";
         PaymentRepository pr = new PaymentRepository("test");
-        String result = pr.invoke_spClaims_InsertVoidPayment(connectionUrl,
-                304427,19672,
-                "15FD715F-7C52-45D9-8625-B1D3796B8A65",
-                "15779D93-532B-424C-9399-04BF6CDF0739");
+
+        String result = pr.insert_Claim_Payment(
+                41970,
+                "810A04AC-82BD-45C0-A6E5-003F7E963754",
+            null,
+                null,
+                3,
+                null,
+                BigDecimal.valueOf(12.52),
+                "810A04AC-82BD-45C0-A6E5-003F7E963754",
+                null,
+                null,
+                null,
+                0,
+                0,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                "00000000-0000-0000-0000-000000000000",
+                0);
+
+
+//        String result = pr.void_Claim_Payment(connectionUrl,
+//                304427,19672,
+//                "15FD715F-7C52-45D9-8625-B1D3796B8A65",
+//                "15779D93-532B-424C-9399-04BF6CDF0739");
 
         /*
            Test Case for cleanup

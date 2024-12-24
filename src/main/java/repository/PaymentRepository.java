@@ -121,6 +121,7 @@ public class PaymentRepository {
             //Step5: Cleanup code
             pst_tran.close();
             pstmt_commit.close();
+            connection.commit();
             connection.close();
         }
         catch (Exception e) {
@@ -136,7 +137,7 @@ public class PaymentRepository {
     /*
        This Method executes when the payment is voided.
     */
-    public String invoke_spClaims_InsertVoidPayment(
+    public String void_Claim_Payment(
             String imsConnectionString,
             int resPayId,
             int claimId,
@@ -305,43 +306,43 @@ public class PaymentRepository {
         HashMap<String,Object> result = new HashMap<>();
         CallableStatement  pst =
                 connection.prepareCall(
-                        "{call dbo.spClaims_InsertReservePayment(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)}"
+                        "{? = call dbo.Fortegra_InsertReservePayment(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)}"
                 );
         try {
-            pst.setInt(1, ClaimId);
-            pst.setString(2, ClaimantGuid);
-            pst.setInt(3, CoverageTypeId);
-            pst.setObject(4, CoverageTypeDescriptionId);
-            pst.setInt(5, ResPayTypeId);
-            pst.setObject(6, ResPaySubTypeId);
-            pst.setBigDecimal(7, ResPayAmount);
-            pst.setString(8,CreatedByGuid);
-            pst.setString(9, Comments);
-            pst.setInt(10, IsPayment);
-            pst.setString(11, PayeeGuid);
-            pst.setString(12, PayeeName);
-            pst.setInt(13, IsPayeeClaimant);
-            pst.setInt(14, IsPayeeInsured);
-            pst.setInt(15, IsPaymentReduction);
-            pst.setInt(16, IsRecovery);
-            pst.setString(17, RecoveryCheckNumber);
-            pst.setInt(18, Void);
-            pst.setInt(19, PaymentReturn);
-            pst.setObject(20,PaymentReturn_ResPayId);
-            pst.setObject(21, AdditionalPayees);
-            pst.setObject(22, Override_Address1);
-            pst.setObject(23, Override_Address2);
-            pst.setObject(24, Override_City);
-            pst.setObject(25, Override_State);
-            pst.setObject(26, Override_ZipCode);
-            pst.setObject(27, Override_ISOCountryCode);
-            pst.setTimestamp(28, date);
-            pst.setObject(29, PaymentResPayId);
-            pst.setInt(30, IsPayeeDefenseAttorney);
-            pst.setInt(31,IsPayeeClaimantAttorney);
-            pst.registerOutParameter(32, java.sql.Types.INTEGER);
+            pst.registerOutParameter(1, java.sql.Types.INTEGER);
+            pst.setInt(2, ClaimId);
+            pst.setString(3, ClaimantGuid);
+            pst.setObject(4, CoverageTypeId);
+            pst.setObject(5, CoverageTypeDescriptionId);
+            pst.setInt(6, ResPayTypeId);
+            pst.setObject(7, ResPaySubTypeId);
+            pst.setBigDecimal(8, ResPayAmount);
+            pst.setObject(9,CreatedByGuid);
+            pst.setObject(10, Comments);
+            pst.setInt(11, IsPayment);
+            pst.setObject(12, PayeeGuid);
+            pst.setObject(13, PayeeName);
+            pst.setInt(14, IsPayeeClaimant);
+            pst.setInt(15, IsPayeeInsured);
+            pst.setInt(16, IsPaymentReduction);
+            pst.setInt(17, IsRecovery);
+            pst.setObject(18, RecoveryCheckNumber);
+            pst.setInt(19, Void);
+            pst.setInt(20, PaymentReturn);
+            pst.setObject(21,PaymentReturn_ResPayId);
+            pst.setObject(22, AdditionalPayees);
+            pst.setObject(23, Override_Address1);
+            pst.setObject(24, Override_Address2);
+            pst.setObject(25, Override_City);
+            pst.setObject(26, Override_State);
+            pst.setObject(27, Override_ZipCode);
+            pst.setObject(28, Override_ISOCountryCode);
+            pst.setObject(29, date);
+            pst.setObject(30, PaymentResPayId);
+            pst.setObject(31, IsPayeeDefenseAttorney);
+            pst.setObject(32,IsPayeeClaimantAttorney);
             pst.execute();
-            result.put("RespayId",  pst.getInt(32));
+            result.put("ResPayId",  pst.getInt(1));
             result.put("DebugMessage","spClaims_InsertReservePayment executed successfully");
         }
         catch(Exception ex){
@@ -371,7 +372,7 @@ public class PaymentRepository {
         try {
             pst.setInt(1, ResPayId);
             pst.setString(2, ChildLineGuid);
-            pst.setInt(3, PaymentTypeId);
+            pst.setObject(3, PaymentTypeId);
             pst.execute();
             return "insert_Fortegra_CustomChildLine executed successfully";
         }
@@ -412,7 +413,7 @@ public class PaymentRepository {
                 pstmt.setString(2, userguid);
                 pstmt.setInt(3, bankgl);
                 pstmt.execute();
-                result += "Called Stored Procedure...\n" ;
+                result += "Called invoke_spClaims_TransferPayment Stored Procedure...\n" ;
             }
 
             pstmt_bankgl.close();
@@ -420,7 +421,7 @@ public class PaymentRepository {
         }
         catch (Exception e){
             result += "Error-"+ e.getMessage() + "\n";
-            result += "Error-StackTrace - "+e.getCause().toString() + "\n";
+            result += "invoke_spClaims_TransferPayment failed with an error. Error-StackTrace - "+e.getCause().toString() + "\n";
         }
         return result;
     }

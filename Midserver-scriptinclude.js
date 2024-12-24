@@ -35,17 +35,74 @@ FortegraUtil.prototype = {
 		return pgpObj;
     },
 
-    transferPayment: function() {
-
-        this.imsConnectionString = probe.getParameter("imsConnectionString");
-        this.respayid = probe.getParameter("respayid");
-        this.userguid = probe.getParameter("userguid");
-        var pgpObj = new this.Pgp().invoke_spClaims_TransferPayment(
-                                                    this.imsConnectionString,
-                                                    this.respayid,
-                                                    this.userguid);
-        return pgpObj;
+    insertPayment: function() {
+            this.ClaimId = probe.getParameter("ClaimId");
+            this.ClaimantGuid = probe.getParameter("ClaimantGuid");
+            this.CoverageTypeId = probe.getParameter("CoverageTypeId");
+            this.CoverageTypeDescriptionId = probe.getParameter("CoverageTypeDescriptionId");
+            this.ResPayTypeId = probe.getParameter("ResPayTypeId");
+            this.ResPaySubTypeId = probe.getParameter("ResPaySubTypeId");
+            this.ResPayAmount = probe.getParameter("ResPayAmount");
+            this.CreatedByGuid = probe.getParameter("CreatedByGuid");
+            this.Comments = probe.getParameter("Comments");
+            this.PayeeGuid = probe.getParameter("PayeeGuid");
+            this.PayeeName = probe.getParameter("PayeeName");
+            this.IsPayeeClaimant = probe.getParameter("IsPayeeClaimant");
+            this.IsPayeeInsured = probe.getParameter("IsPayeeInsured");
+            this.AdditionalPayees = probe.getParameter("AdditionalPayees");
+            this.Override_Address1 = probe.getParameter("Override_Address1");
+            this.Override_Address2 = probe.getParameter("Override_Address2");
+            this.Override_City = probe.getParameter("Override_City");
+            this.Override_State = probe.getParameter("Override_State");
+            this.Override_ZipCode = probe.getParameter("Override_ZipCode");
+            this.Override_ISOCountryCode = probe.getParameter("Override_ISOCountryCode");
+            this.date = probe.getParameter("date");
+            this.PaymentResPayId = probe.getParameter("PaymentResPayId");
+            this.IsPayeeDefenseAttorney = probe.getParameter("IsPayeeDefenseAttorney");
+            this.IsPayeeClaimantAttorney = probe.getParameter("IsPayeeClaimantAttorney");
+            this.ChildLineGUID = probe.getParameter("ChildLineGUID");
+            this.PaymentType = probe.getParameter("PaymentType");
+            var pgpObj = new this.Pgp_PaymentRepo("test").insert_Claim_Payment(
+                                                        this.ClaimId,
+                                                        this.ClaimantGuid,
+                                                        this.CoverageTypeId,
+                                                        this.CoverageTypeDescriptionId,
+                                                        this.ResPayTypeId,
+                                                        this.ResPaySubTypeId,
+                                                        this.ResPayAmount,
+                                                        this.CreatedByGuid,
+                                                        this.Comments,
+                                                        this.PayeeGuid,
+                                                        this.PayeeName,
+                                                        this.IsPayeeClaimant,
+                                                        this.IsPayeeInsured,
+                                                        this.AdditionalPayees,
+                                                        this.Override_Address1,
+                                                        this.Override_Address2,
+                                                        this.Override_City,
+                                                        this.Override_State,
+                                                        this.Override_ZipCode,
+                                                        this.Override_ISOCountryCode,
+                                                        this.date,
+                                                        this.PaymentResPayId,
+                                                        this.IsPayeeDefenseAttorney,
+                                                        this.IsPayeeClaimantAttorney,
+                                                        this.ChildLineGUID,
+                                                        this.PaymentType);
+            return pgpObj;
     },
+
+//    transferPayment: function() {
+//
+//        this.imsConnectionString = probe.getParameter("imsConnectionString");
+//        this.respayid = probe.getParameter("respayid");
+//        this.userguid = probe.getParameter("userguid");
+//        var pgpObj = new this.Pgp().invoke_spClaims_TransferPayment(
+//                                                    this.imsConnectionString,
+//                                                    this.respayid,
+//                                                    this.userguid);
+//        return pgpObj;
+//    },
 
     voidPayment: function() {
             this.imsConnectionString = probe.getParameter("imsConnectionString");

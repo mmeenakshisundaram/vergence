@@ -233,47 +233,44 @@ public class CommonUtil {
     /*
      Clean up mid server temp table
     */
-    public String cleanMidServer() throws IOException
+    public String cleanMidServer(String foldername, boolean isroot) throws IOException
     {
-        //String foldername, boolean isroot
-//        JSONObject overlAllResult = new JSONObject();
-//        try {
-//            overlAllResult.put("Status1",  "Cleanup started...");
-//            String prefix = "";
-//            if (isroot) {
-//                prefix = System.getProperty("java.io.tmpdir");
-//            }
-//            File dirPath = new File(prefix + foldername);
-//            if(dirPath.exists()) {
-//                File filesList[] = dirPath.listFiles();
-//                for(File file : filesList) {
-//                    try {
-//                        if (file.isFile()) {
-//                            file.delete();
-//                        } else {
-//                            cleanMidServer(file.getAbsolutePath(), false);
-//                            file.delete();
-//                        }
-//                    }
-//                    catch (Exception ex){
-//                        overlAllResult.put("Error_"+file.getName(),  ex.getCause().toString());
-//                    }
-//                }
-//                //FileUtils.cleanDirectory(dirPath);
-//                overlAllResult.put("Status2",  "Cleanup done...");
-//            }
-//            else{
-//                overlAllResult.put("Status2",  "Folder Not Exist...");
-//            }
-//            overlAllResult.put("Status2",  "Cleanup completed...");
-//            return overlAllResult.toString();
-//        }
-//        catch (Exception ex){
-//            overlAllResult.put("Error1",  ex.getMessage());
-//            overlAllResult.put("Error2",  ex.getStackTrace() +  ex.getCause().toString());
-//            return overlAllResult.toString();
-//        }
-
-        return "Hi";
+        JSONObject overlAllResult = new JSONObject();
+        try {
+            overlAllResult.put("Status1",  "Cleanup started...");
+            String prefix = "";
+            if (isroot) {
+                prefix = System.getProperty("java.io.tmpdir");
+            }
+            File dirPath = new File(prefix + foldername);
+            if(dirPath.exists()) {
+                File filesList[] = dirPath.listFiles();
+                for(File file : filesList) {
+                    try {
+                        if (file.isFile()) {
+                            file.delete();
+                        } else {
+                            cleanMidServer(file.getAbsolutePath(), false);
+                            file.delete();
+                        }
+                    }
+                    catch (Exception ex){
+                        overlAllResult.put("Error_"+file.getName(),  ex.getCause().toString());
+                    }
+                }
+                //FileUtils.cleanDirectory(dirPath);
+                overlAllResult.put("Status2",  "Cleanup done...");
+            }
+            else{
+                overlAllResult.put("Status2",  "Folder Not Exist...");
+            }
+            overlAllResult.put("Status2",  "Cleanup completed...");
+            return overlAllResult.toString();
+        }
+        catch (Exception ex){
+            overlAllResult.put("Error1",  ex.getMessage());
+            overlAllResult.put("Error2",  ex.getStackTrace() +  ex.getCause().toString());
+            return overlAllResult.toString();
+        }
     }
 }
