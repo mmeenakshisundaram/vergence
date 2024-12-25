@@ -17,38 +17,50 @@ public class PaymentRepository {
         imsConnectionString = CommonUtil.appConfig.getOrDefault(env+"_imsconnectionstring","na");
     }
 
+    public String test(
+            String test)
+    {
+        return test;
+    }
+
+
     /*
      Inserts claim payment
      */
-    public String insert_Claim_Payment(
-            Integer ClaimId,
-            String ClaimantGuid,
-            Integer CoverageTypeId,
-            Integer CoverageTypeDescriptionId,
-            Integer ResPayTypeId,
-            Integer ResPaySubTypeId,
-            BigDecimal ResPayAmount,
-            String CreatedByGuid,
-            String Comments,
-            String PayeeGuid,
-            String PayeeName,
-            Integer IsPayeeClaimant,
-            Integer IsPayeeInsured,
-            String AdditionalPayees,
-            String Override_Address1,
-            String Override_Address2,
-            String Override_City,
-            String Override_State,
-            String Override_ZipCode,
-            String Override_ISOCountryCode,
-            Timestamp date,
-            Integer PaymentResPayId,
-            Integer IsPayeeDefenseAttorney,
-            Integer IsPayeeClaimantAttorney,
-            String ChildLineGUID, Integer PaymentType){
+    public String insertClaimPayment(String input){
 
-        JSONObject overAllResult = new JSONObject();
         String debugMessage = "";
+        JSONObject overAllResult = new JSONObject();
+
+
+            JSONObject inputObj = new JSONObject(input);
+            Integer ClaimId = inputObj.get("ClaimId") == JSONObject.NULL ? null: (Integer)inputObj.get("ClaimId");
+            String ClaimantGuid = inputObj.get("ClaimantGuid") == JSONObject.NULL ? null: (String)inputObj.get("ClaimantGuid");
+            Integer CoverageTypeId = inputObj.get("CoverageTypeId") == JSONObject.NULL ? null: (Integer)inputObj.get("CoverageTypeId");
+            Integer CoverageTypeDescriptionId= inputObj.get("CoverageTypeDescriptionId") == JSONObject.NULL ? null: (Integer)inputObj.get("CoverageTypeDescriptionId");
+            Integer ResPayTypeId= inputObj.get("ResPayTypeId") == JSONObject.NULL ? null:  (Integer)inputObj.get("ResPayTypeId");
+            Integer ResPaySubTypeId = inputObj.get("ResPaySubTypeId") == JSONObject.NULL ? null: (Integer)inputObj.get("ResPaySubTypeId");
+            //BigDecimal ResPayAmount = inputObj.get("ResPayAmount") == JSONObject.NULL ? null: inputObj.getBigDecimal("ResPayAmount");
+            BigDecimal ResPayAmount = BigDecimal.valueOf(Double.valueOf((String)inputObj.get("ResPayAmount")));
+            String CreatedByGuid= inputObj.get("CreatedByGuid") == JSONObject.NULL ? null: (String)inputObj.get("CreatedByGuid");
+            String Comments = inputObj.get("Comments") == JSONObject.NULL ? null: (String)inputObj.get("Comments");
+            String PayeeGuid= inputObj.get("PayeeGuid") == JSONObject.NULL ? null: (String)inputObj.get("PayeeGuid");
+            String PayeeName= inputObj.get("PayeeName") == JSONObject.NULL ? null: (String)inputObj.get("PayeeName");
+            Integer IsPayeeClaimant=(Integer) inputObj.get("IsPayeeClaimant");
+            Integer IsPayeeInsured=(Integer) inputObj.get("IsPayeeInsured");
+            String AdditionalPayees = inputObj.get("AdditionalPayees") == JSONObject.NULL ? null: (String)inputObj.get("AdditionalPayees");
+            String Override_Address1 = inputObj.get("Override_Address1") == JSONObject.NULL ? null: (String)inputObj.get("Override_Address1");
+            String Override_Address2 = inputObj.get("Override_Address2") == JSONObject.NULL ? null: (String)inputObj.get("Override_Address2");
+            String Override_City = inputObj.get("Override_City") == JSONObject.NULL ? null: (String)inputObj.get("Override_City");
+            String Override_State = inputObj.get("Override_State") == JSONObject.NULL ? null: (String)inputObj.get("Override_State");
+            String Override_ZipCode = inputObj.get("Override_ZipCode") == JSONObject.NULL ? null: (String)inputObj.get("Override_ZipCode");
+            String Override_ISOCountryCode = inputObj.get("Override_ISOCountryCode") == JSONObject.NULL ? null: (String)inputObj.get("Override_ISOCountryCode");
+            Timestamp date = inputObj.get("dateCreated") == JSONObject.NULL ? null: Timestamp.valueOf((String)inputObj.get("dateCreated"));
+            Integer PaymentResPayId = inputObj.get("PaymentResPayId") == JSONObject.NULL ? null: (Integer)inputObj.get("PaymentResPayId");
+            Integer IsPayeeDefenseAttorney=(Integer) inputObj.get("IsPayeeDefenseAttorney");
+            Integer IsPayeeClaimantAttorney=(Integer) inputObj.get("IsPayeeClaimantAttorney");
+            String ChildLineGUID= inputObj.get("ChildLineGUID") == JSONObject.NULL ? null: (String)inputObj.get("ChildLineGUID");
+            Integer PaymentType= inputObj.get("PaymentType") == JSONObject.NULL ? null: (Integer)inputObj.get("PaymentType");
         try  {
             Connection connection = DriverManager.getConnection(imsConnectionString);
             connection.setAutoCommit(false);

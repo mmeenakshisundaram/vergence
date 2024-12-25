@@ -1,5 +1,6 @@
 package processor;
 
+import org.json.JSONObject;
 import repository.PaymentRepository;
 import util.CommonUtil;
 import java.io.IOException;
@@ -59,35 +60,63 @@ public class main {
                         + "user=mperkins@fortegra.com_DBO;"
                         + "password=the2.sofa.chanted.a5.ragnet.relieves.a.sTump;";
         PaymentRepository pr = new PaymentRepository("test");
+        String result = pr.insertClaimPayment("{\n" +
+                "  \"ClaimId\": 41970,\n" +
+                "  \"ClaimantGuid\": \"810A04AC-82BD-45C0-A6E5-003F7E963754\",\n" +
+                "  \"CoverageTypeId\": null,\n" +
+                "  \"CoverageTypeDescriptionId\": null,\n" +
+                "  \"ResPayTypeId\": 3,\n" +
+                "  \"ResPaySubTypeId\": null,\n" +
+                "  \"ResPayAmount\": \"12.52\",\n" +
+                "  \"CreatedByGuid\": \"810A04AC-82BD-45C0-A6E5-003F7E963754\",\n" +
+                "  \"Comments\":null,\n" +
+                "  \"PayeeGuid\": null,\n" +
+                "  \"PayeeName\": null,\n" +
+                "  \"IsPayeeClaimant\": 0,\n" +
+                "  \"IsPayeeInsured\": 0,\n" +
+                "  \"AdditionalPayees\": null,\n" +
+                "  \"Override_Address1\": null,\n" +
+                "  \"Override_Address2\": null,\n" +
+                "  \"Override_City\": null,\n" +
+                "  \"Override_State\": null,\n" +
+                "  \"Override_ZipCode\": null,  \n" +
+                "  \"Override_ISOCountryCode\": null,  \n" +
+                "  \"dateCreated\": null,  \n" +
+                "  \"PaymentResPayId\": null,  \n" +
+                "  \"IsPayeeDefenseAttorney\": 0,  \n" +
+                "  \"IsPayeeClaimantAttorney\": 0, \n" +
+                "  \"ChildLineGUID\": \"00000000-0000-0000-0000-000000000000\", \n" +
+                "  \"PaymentType\": 0\n" +
+                "}");
 
-        String result = pr.insert_Claim_Payment(
-                41970,
-                "810A04AC-82BD-45C0-A6E5-003F7E963754",
-            null,
-                null,
-                3,
-                null,
-                BigDecimal.valueOf(12.52),
-                "810A04AC-82BD-45C0-A6E5-003F7E963754",
-                null,
-                null,
-                null,
-                0,
-                0,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                "00000000-0000-0000-0000-000000000000",
-                0);
-
+//        String result = pr.insert_Claim_Payment(
+//                41970,
+//                "810A04AC-82BD-45C0-A6E5-003F7E963754",
+//            null,
+//                null,
+//                3,
+//                null,
+//                BigDecimal.valueOf(12.52),
+//                "810A04AC-82BD-45C0-A6E5-003F7E963754",
+//                null,
+//                null,
+//                null,
+//                0,
+//                0,
+//                null,
+//                null,
+//                null,
+//                null,
+//                null,
+//                null,
+//                null,
+//                null,
+//                null,
+//                null,
+//                null,
+//                "00000000-0000-0000-0000-000000000000",
+//                0);
+        System.out.println(result);
 
 //        String result = pr.void_Claim_Payment(connectionUrl,
 //                304427,19672,
