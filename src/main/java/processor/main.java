@@ -63,15 +63,15 @@ public class main {
         String result = pr.insertClaimPayment("{\n" +
                 "  \"ClaimId\": 41970,\n" +
                 "  \"ClaimantGuid\": \"810A04AC-82BD-45C0-A6E5-003F7E963754\",\n" +
-                "  \"CoverageTypeId\": null,\n" +
+                "  \"CoverageTypeId\": 5,\n" +
                 "  \"CoverageTypeDescriptionId\": null,\n" +
                 "  \"ResPayTypeId\": 3,\n" +
                 "  \"ResPaySubTypeId\": null,\n" +
                 "  \"ResPayAmount\": \"12.52\",\n" +
                 "  \"CreatedByGuid\": \"810A04AC-82BD-45C0-A6E5-003F7E963754\",\n" +
-                "  \"Comments\":null,\n" +
-                "  \"PayeeGuid\": null,\n" +
-                "  \"PayeeName\": null,\n" +
+                "  \"Comments\":\"Test\",\n" +
+                "  \"PayeeGuid\": \"810A04AC-82BD-45C0-A6E5-003F7E963754\",\n" +
+                "  \"PayeeName\": \"Test\",\n" +
                 "  \"IsPayeeClaimant\": 0,\n" +
                 "  \"IsPayeeInsured\": 0,\n" +
                 "  \"AdditionalPayees\": null,\n" +
