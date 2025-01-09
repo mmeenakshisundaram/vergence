@@ -55,7 +55,8 @@ public class ClaimRepository {
             pst.setBigDecimal(13,null);
             pst.setString(14,County);
             pst.execute();
-            overAllResult.put("DebugMessage","spClaims_UpdateAccidentInformation executed successfully");
+            overAllResult.put("AccidentInformationId",AccidentInformationId);
+            debugMessage = "spClaims_UpdateAccidentInformation executed successfully";
             pst.close();
             connection.commit();
             connection.close();

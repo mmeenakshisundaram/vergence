@@ -30,7 +30,7 @@ public class ClaimRepositoryTest {
                 "  \"AccidentDescription\": \"test\",\n" +
                 "  \"AccidentTime\": \"test\",\n" +
                 "  \"County\":\"Test\",\n" +
-                "  \"AccidentTypeId\": 0,\n" +
+                "  \"AccidentTypeId\": null,\n" +
                 "}");
         assertNotEquals(result,"");
     }

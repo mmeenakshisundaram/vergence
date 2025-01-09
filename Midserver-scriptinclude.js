@@ -9,6 +9,7 @@ FortegraUtil.prototype = {
     initialize: function() {
 		this.PaymentRepo = Packages.repository.PaymentRepository;
 		this.Pgp = Packages.util.CommonUtil;
+		this.ClaimRepo = Packages.repository.ClaimRepository;
     },
 
     getAccessToken: function() {
@@ -38,6 +39,12 @@ FortegraUtil.prototype = {
 													this.sharepointToken,
 													this.folderName,
 													this.driveId);
+		return pgpObj;
+    },
+
+	updateAccidentInformation: function() {
+		this.input = probe.getParameter("requestBody");
+		var pgpObj = new this.ClaimRepo("test").updateAccidentInformation(this.input);
 		return pgpObj;
     },
 
