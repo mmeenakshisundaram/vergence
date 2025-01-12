@@ -48,6 +48,12 @@ FortegraUtil.prototype = {
 		return pgpObj;
     },
 
+    insertAccidentInformation: function() {
+    		this.input = probe.getParameter("requestBody");
+    		var pgpObj = new this.ClaimRepo("test").insertAccidentInformation(this.input);
+    		return pgpObj;
+        },
+
 	// transferPayment: function() {
 
     //     this.imsConnectionString = probe.getParameter("imsConnectionString");

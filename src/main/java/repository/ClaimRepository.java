@@ -2,7 +2,6 @@ package repository;
 
 import org.json.JSONObject;
 import util.CommonUtil;
-
 import java.sql.*;
 
 public class ClaimRepository {
@@ -14,6 +13,63 @@ public class ClaimRepository {
      */
     public ClaimRepository(String env){
         imsConnectionString = CommonUtil.appConfig.getOrDefault(env+"_imsconnectionstring","na");
+    }
+
+    /*
+     inserts the new accident information
+    */
+    public String insertAccidentInformation(String input) throws SQLException {
+        JSONObject inputObj = new JSONObject(input);
+        JSONObject overAllResult = new JSONObject();
+        Integer ClaimIdId = inputObj.get("ClaimId") == JSONObject.NULL ? null: (Integer)inputObj.get("ClaimId");
+        String Address1 = inputObj.get("Address1") == JSONObject.NULL ? null: (String)inputObj.get("Address1");
+        String City = inputObj.get("City") == JSONObject.NULL ? null: (String)inputObj.get("City");
+        String State= inputObj.get("State") == JSONObject.NULL ? null: (String)inputObj.get("State");
+        String ZipCode= inputObj.get("ZipCode") == JSONObject.NULL ? null: (String)inputObj.get("ZipCode");
+        String ISOCountryCode = inputObj.get("ISOCountryCode") == JSONObject.NULL ? null: (String)inputObj.get("ISOCountryCode");
+        String AccidentDescription = inputObj.get("AccidentDescription") == JSONObject.NULL ? null: (String)inputObj.get("AccidentDescription");
+        String AccidentTime = inputObj.get("AccidentTime") == JSONObject.NULL ? null: (String)inputObj.get("AccidentTime");
+        String County = inputObj.get("County") == JSONObject.NULL ? null: (String)inputObj.get("County");
+        Integer  AccidentTypeId = inputObj.get("AccidentTypeId") == JSONObject.NULL ? 0: (Integer)inputObj.get("AccidentTypeId");
+        String debugMessage = "";
+        Connection connection = DriverManager.getConnection(imsConnectionString);
+        try {
+            connection.setAutoCommit(false);
+            CallableStatement pst =
+                    connection.prepareCall(
+                            "{? = call spClaims_InsertAccidentInformation(?,?,?,?,?,?,?,?,?,?,?,?,?,?)}"
+                    );
+            pst.registerOutParameter(1, java.sql.Types.INTEGER);
+            pst.setInt(2, ClaimIdId);
+            pst.setString(3, Address1);
+            pst.setString(4, null);
+            pst.setString(5, City);
+            pst.setString(6, State);
+            pst.setString(7, ZipCode);
+            pst.setString(8, ISOCountryCode);
+            pst.setString(9,null);
+            pst.setString(10,AccidentDescription);
+            pst.setString(11, AccidentTime);
+            pst.setInt(12,AccidentTypeId);
+            pst.setBigDecimal(13,null);
+            pst.setBigDecimal(14,null);
+            pst.setString(15,County);
+            pst.execute();
+            overAllResult.put("AccidentInformationId",pst.getInt(1));
+            debugMessage = "spClaims_InsertAccidentInformation executed successfully";
+            pst.close();
+            connection.commit();
+            connection.close();
+        }
+        catch (Exception e) {
+            debugMessage += "Error - "+ e.getMessage();
+            debugMessage += "Error-StackTrace - "+e.getStackTrace();
+            connection.close();
+        }
+        finally{
+            overAllResult.put("DebugMessage", debugMessage);
+        }
+        return overAllResult.toString();
     }
 
     /*
