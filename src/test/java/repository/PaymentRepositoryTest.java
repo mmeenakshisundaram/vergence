@@ -66,4 +66,13 @@ public class PaymentRepositoryTest {
         "15779D93-532B-424C-9399-04BF6CDF0739");
         assertNotEquals(result,"");
     }
+
+    @Test
+    void shouldtransferClaimPayment() throws IOException, SQLException {
+
+        PaymentRepository pr = new PaymentRepository("test");
+        String result = pr.transferClaimPayment(304702,
+                "15779D93-532B-424C-9399-04BF6CDF0739");
+        assertNotEquals(result,"");
+    }
 }

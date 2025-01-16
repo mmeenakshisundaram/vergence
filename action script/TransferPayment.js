@@ -8,8 +8,7 @@ output: Resp_Payload
 var probe = new JavascriptProbe(inputs.midservername);
 probe.setName("IMS_TransferPayment");
 probe.setJavascript("var pdf = new FortegraUtil(); res = pdf.transferPayment();");
-probe.addParameter("imsConnectionString",inputs.imsConnectionString);
-probe.addParameter("respayid", inputs.respayid );
+probe.addParameter("respayid", inputs.respayid);
 probe.addParameter("userguid", inputs.userguid);
 var strOutputEccId = probe.create();
 

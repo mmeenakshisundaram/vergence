@@ -110,11 +110,11 @@ public class PaymentRepository {
                 debugMessage += result + "\n";
 
                 //Step4: Call invoke_spClaims_TransferPayment
-                String transferResult = invoke_spClaims_TransferPayment(connection,
-                        (Integer) paymentResult.getOrDefault("ResPayId", null),
-                        CreatedByGuid);
-
-                debugMessage += transferResult + "\n";
+//                String transferResult = invoke_spClaims_TransferPayment(connection,
+//                        (Integer) paymentResult.getOrDefault("ResPayId", null),
+//                        CreatedByGuid);
+//
+//                debugMessage += transferResult + "\n";
 
                 //Query the offset payment for sending to servicenow
                 JSONObject offset_Record =  select_OffSet_PaymentRecord(connection,
@@ -131,6 +131,29 @@ public class PaymentRepository {
             pstmt_commit.close();
             connection.commit();
             connection.close();
+        }
+        catch (Exception e) {
+            debugMessage += "Error - "+ e.getMessage();
+            debugMessage += "Error-StackTrace - "+e.getStackTrace();
+        }
+        finally{
+            overAllResult.put("DebugMessage", debugMessage);
+        }
+        return overAllResult.toString();
+    }
+
+    public String transferClaimPayment(int resPayId,
+                                       String userguid) throws SQLException {
+        String debugMessage = "";
+        JSONObject overAllResult = new JSONObject();
+        try {
+            Connection connection = DriverManager.getConnection(imsConnectionString);
+            connection.setAutoCommit(false);
+            String transferResult = invoke_spClaims_TransferPayment(connection,
+                    resPayId,userguid);
+            connection.commit();
+            connection.close();
+            debugMessage += transferResult + "\n";
         }
         catch (Exception e) {
             debugMessage += "Error - "+ e.getMessage();
