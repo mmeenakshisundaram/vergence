@@ -142,6 +142,9 @@ public class PaymentRepository {
         return overAllResult.toString();
     }
 
+    /*
+     Transfer claim payment
+     */
     public String transferClaimPayment(int resPayId,
                                        String userguid) throws SQLException {
         String debugMessage = "";
@@ -169,7 +172,6 @@ public class PaymentRepository {
        This Method executes when the payment is voided.
     */
     public String void_Claim_Payment(
-            String imsConnectionString,
             int resPayId,
             int claimId,
             String claimantGUID,
@@ -296,6 +298,119 @@ public class PaymentRepository {
     }
 
     /*
+     Inserts Payment return
+     */
+    public String insertPaymentReturn(String input){
+        JSONObject inputObj = new JSONObject(input);
+        Integer ClaimId = inputObj.get("ClaimId") == JSONObject.NULL ? null: (Integer)inputObj.get("ClaimId");
+        String ClaimantGuid = inputObj.get("ClaimantGuid") == JSONObject.NULL ? null: (String)inputObj.get("ClaimantGuid");
+        Integer CoverageTypeId = inputObj.get("CoverageTypeId") == JSONObject.NULL ? null: (Integer)inputObj.get("CoverageTypeId");
+        Integer CoverageTypeDescriptionId= inputObj.get("CoverageTypeDescriptionId") == JSONObject.NULL ? null: (Integer)inputObj.get("CoverageTypeDescriptionId");
+        Integer ResPayTypeId= inputObj.get("ResPayTypeId") == JSONObject.NULL ? null:  (Integer)inputObj.get("ResPayTypeId");
+        Integer ResPaySubTypeId = inputObj.get("ResPaySubTypeId") == JSONObject.NULL ? null: (Integer)inputObj.get("ResPaySubTypeId");
+        BigDecimal ResPayAmount = BigDecimal.valueOf(Double.valueOf((String)inputObj.get("ResPayAmount")));
+        String CreatedByGuid= inputObj.get("CreatedByGuid") == JSONObject.NULL ? null: (String)inputObj.get("CreatedByGuid");
+        String Comments = inputObj.get("Comments") == JSONObject.NULL ? null: (String)inputObj.get("Comments");
+        String PayeeGuid= inputObj.get("PayeeGuid") == JSONObject.NULL ? null: (String)inputObj.get("PayeeGuid");
+        String PayeeName= inputObj.get("PayeeName") == JSONObject.NULL ? null: (String)inputObj.get("PayeeName");
+        Integer IsPayeeClaimant=(Integer) inputObj.get("IsPayeeClaimant");
+        Integer IsPayeeInsured=(Integer) inputObj.get("IsPayeeInsured");
+        String AdditionalPayees = inputObj.get("AdditionalPayees") == JSONObject.NULL ? null: (String)inputObj.get("AdditionalPayees");
+        String Override_Address1 = inputObj.get("Override_Address1") == JSONObject.NULL ? null: (String)inputObj.get("Override_Address1");
+        String Override_Address2 = inputObj.get("Override_Address2") == JSONObject.NULL ? null: (String)inputObj.get("Override_Address2");
+        String Override_City = inputObj.get("Override_City") == JSONObject.NULL ? null: (String)inputObj.get("Override_City");
+        String Override_State = inputObj.get("Override_State") == JSONObject.NULL ? null: (String)inputObj.get("Override_State");
+        String Override_ZipCode = inputObj.get("Override_ZipCode") == JSONObject.NULL ? null: (String)inputObj.get("Override_ZipCode");
+        String Override_ISOCountryCode = inputObj.get("Override_ISOCountryCode") == JSONObject.NULL ? null: (String)inputObj.get("Override_ISOCountryCode");
+        Timestamp date = inputObj.get("dateCreated") == JSONObject.NULL ? null: Timestamp.valueOf((String)inputObj.get("dateCreated"));
+        Integer PaymentResPayId = inputObj.get("PaymentResPayId") == JSONObject.NULL ? null: (Integer)inputObj.get("PaymentResPayId");
+        Integer PaymentReturnResPayId = inputObj.get("PaymentReturnResPayId") == JSONObject.NULL ? null: (Integer)inputObj.get("PaymentReturnResPayId");
+        String RecoveryCheckNum = inputObj.get("RecoveryCheckNum") == JSONObject.NULL ? null: (String)inputObj.get("RecoveryCheckNum");
+        Integer IsPayeeDefenseAttorney=(Integer) inputObj.get("IsPayeeDefenseAttorney");
+        Integer IsPayeeClaimantAttorney=(Integer) inputObj.get("IsPayeeClaimantAttorney");
+        String ChildLineGUID= inputObj.get("ChildLineGUID") == JSONObject.NULL ? null: (String)inputObj.get("ChildLineGUID");
+        Integer PaymentType= inputObj.get("PaymentType") == JSONObject.NULL ? null: (Integer)inputObj.get("PaymentType");
+        String debugMessage = "";
+        JSONObject overAllResult = new JSONObject();
+        try {
+            Connection connection = DriverManager.getConnection(imsConnectionString);
+            connection.setAutoCommit(false);
+            //1. Begin Transaction
+            PreparedStatement pst_tran =
+                    connection.prepareStatement("BEGIN TRAN");
+            pst_tran.execute();
+            debugMessage += "Transaction Started...\n";
+
+            //Step1: Call spClaims_InsertReservePayment
+            HashMap<String,Object> paymentResult = insertClaims_ReservePayment(
+                    connection,
+                    ClaimId,
+                    ClaimantGuid,
+                    CoverageTypeId,
+                    CoverageTypeDescriptionId,
+                    ResPayTypeId,
+                    ResPaySubTypeId,
+                    ResPayAmount,
+                    CreatedByGuid,
+                    Comments,
+                    1,
+                    PayeeGuid,
+                    PayeeName,
+                    IsPayeeClaimant,
+                    IsPayeeInsured,
+                    0,
+                    0,
+                    RecoveryCheckNum,
+                    0, 1,
+                    PaymentReturnResPayId,
+                    AdditionalPayees,
+                    Override_Address1,
+                    Override_Address2,
+                    Override_City,
+                    Override_State,
+                    Override_ZipCode,
+                    Override_ISOCountryCode,
+                    date,
+                    PaymentResPayId,
+                    IsPayeeDefenseAttorney,
+                    IsPayeeClaimantAttorney
+            );
+            debugMessage += "Call to spClaims_InsertReservePayment completed."+ paymentResult.getOrDefault("DebugMessage","") + "\n";
+            if(paymentResult.containsKey("ResPayId")) {
+                overAllResult.put("ResPayId", (Integer) paymentResult.getOrDefault("ResPayId", null));
+
+                String result = insert_Fortegra_CustomChildLine(connection,
+                        (Integer) paymentResult.getOrDefault("ResPayId", null),
+                        ChildLineGUID,
+                        PaymentType);
+                debugMessage += result + "\n";
+
+                //Query the offset payment for sending to servicenow
+                JSONObject offset_Record =  select_OffSet_PaymentRecord(connection,
+                        (Integer) paymentResult.getOrDefault("ResPayId", null));
+                overAllResult.put("OffsetPaymentReturn",offset_Record);
+            }
+
+            PreparedStatement pstmt_commit =  connection.prepareStatement("COMMIT");
+            pstmt_commit.execute();
+            debugMessage += "Commited Transaction..."+ "\n";
+
+            pst_tran.close();
+            pstmt_commit.close();
+            connection.commit();
+            connection.close();
+        }
+        catch (Exception e) {
+            debugMessage += "Error - "+ e.getMessage();
+            debugMessage += "Error-StackTrace - "+e.getStackTrace();
+        }
+        finally{
+            overAllResult.put("DebugMessage", debugMessage);
+        }
+        return overAllResult.toString();
+    }
+
+    /*
      Calls stored procedure to insert
         1. Reserves
         2. Payments
@@ -374,10 +489,10 @@ public class PaymentRepository {
             pst.setObject(32,IsPayeeClaimantAttorney);
             pst.execute();
             result.put("ResPayId",  pst.getInt(1));
-            result.put("DebugMessage","spClaims_InsertReservePayment executed successfully");
+            result.put("DebugMessage","Fortegra_InsertReservePayment executed successfully");
         }
         catch(Exception ex){
-            result.put("DebugMessage","spClaims_InsertReservePayment failed with an error - "+ex.getCause().toString());
+            result.put("DebugMessage","Fortegra_InsertReservePayment failed with an error - "+ex.getCause().toString());
         }
         finally {
             pst.close();
@@ -488,6 +603,8 @@ public class PaymentRepository {
             result_offset_record.put("PaymentResPayId", rs.getObject("PaymentResPayId") == null ? null: (Integer)rs.getObject("PaymentResPayId"));
             result_offset_record.put("IsPayeeDefenseAttorney", rs.getObject("IsPayeeDefenseAttorney") == null ? null:  rs.getInt("IsPayeeDefenseAttorney"));
             result_offset_record.put("IsPayeeClaimantAttorney", rs.getObject("IsPayeeClaimantAttorney") == null ? null:  rs.getInt("IsPayeeClaimantAttorney"));
+            result_offset_record.put("PaymentReturn_ResPayId", rs.getObject("PaymentReturn_ResPayId") == null ? null:  rs.getInt("PaymentReturn_ResPayId"));
+            result_offset_record.put("RecoveryCheckNumber", rs.getObject("RecoveryCheckNumber") == null ? null:  rs.getString("RecoveryCheckNumber"));
             break;
         }
         return result_offset_record;

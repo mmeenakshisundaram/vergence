@@ -54,7 +54,7 @@ FortegraUtil.prototype = {
     		return pgpObj;
         },
 
-	 transferPayment: function() {
+	transferPayment: function() {
          this.respayid = probe.getParameter("respayid");
          this.userguid = probe.getParameter("userguid");
          var pgpObj = new this.PaymentRepo("test").transferClaimPayment(
@@ -62,6 +62,12 @@ FortegraUtil.prototype = {
                                                      this.userguid);
          return pgpObj;
      },
+
+    insertPaymentReturn: function() {
+        this.input = probe.getParameter("requestBody");
+        var pgpObj = new this.PaymentRepo("test").insertPaymentReturn(this.input);
+        return pgpObj;
+    },
 
     type: FortegraUtil
 };

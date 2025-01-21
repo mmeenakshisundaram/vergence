@@ -15,11 +15,6 @@ public class PaymentRepositoryTest {
 
     @Test
     void shouldInsertClaimPayment() throws IOException {
-        String connectionUrl =
-                "jdbc:sqlserver://MGADSTest01.ny.mgasystems.com:1433;"
-                        + "database=Fortegra_Test;"
-                        + "user=mperkins@fortegra.com_DBO;"
-                        + "password=the2.sofa.chanted.a5.ragnet.relieves.a.sTump;";
         PaymentRepository pr = new PaymentRepository("test");
         String result = pr.insertClaimPayment("{\n" +
                 "  \"ClaimId\": 41970,\n" +
@@ -54,13 +49,8 @@ public class PaymentRepositoryTest {
 
     @Test
     void shouldVoidPayment() throws IOException, SQLException {
-        String connectionUrl =
-                "jdbc:sqlserver://MGADSTest01.ny.mgasystems.com:1433;"
-                        + "database=Fortegra_Test;"
-                        + "user=mperkins@fortegra.com_DBO;"
-                        + "password=the2.sofa.chanted.a5.ragnet.relieves.a.sTump;";
         PaymentRepository pr = new PaymentRepository("test");
-        String result = pr.void_Claim_Payment(connectionUrl,
+        String result = pr.void_Claim_Payment(
         304427,19672,
         "15FD715F-7C52-45D9-8625-B1D3796B8A65",
         "15779D93-532B-424C-9399-04BF6CDF0739");
@@ -73,6 +63,42 @@ public class PaymentRepositoryTest {
         PaymentRepository pr = new PaymentRepository("test");
         String result = pr.transferClaimPayment(304702,
                 "15779D93-532B-424C-9399-04BF6CDF0739");
+        assertNotEquals(result,"");
+    }
+
+    @Test
+    void shouldInsertPaymentReturn() throws IOException {
+        PaymentRepository pr = new PaymentRepository("test");
+        String result = pr.insertPaymentReturn("{\n" +
+                "  \"ClaimId\": 1243,\n" +
+                "  \"ClaimantGuid\": \"A79F0332-168F-44EC-905D-266D6C38D041\",\n" +
+                "  \"CoverageTypeId\": null,\n" +
+                "  \"CoverageTypeDescriptionId\": null,\n" +
+                "  \"ResPayTypeId\": 2,\n" +
+                "  \"ResPaySubTypeId\": null,\n" +
+                "  \"ResPayAmount\": \"-7242.23\",\n" +
+                "  \"CreatedByGuid\": \"15779D93-532B-424C-9399-04BF6CDF0739\",\n" +
+                "  \"Comments\":\"\",\n" +
+                "  \"PayeeGuid\": \"A39F0332-168F-44EC-905D-266D6C38D041\",\n" +
+                "  \"PayeeName\": \"Fortegra Specialty Insurance Company\",\n" +
+                "  \"IsPayeeClaimant\": 1,\n" +
+                "  \"IsPayeeInsured\": 0,\n" +
+                "  \"AdditionalPayees\": null,\n" +
+                "  \"Override_Address1\": null,\n" +
+                "  \"Override_Address2\": null,\n" +
+                "  \"Override_City\": null,\n" +
+                "  \"Override_State\": null,\n" +
+                "  \"Override_ZipCode\": null,  \n" +
+                "  \"Override_ISOCountryCode\": null,  \n" +
+                "  \"dateCreated\": null,  \n" +
+                "  \"PaymentResPayId\": null,  \n" +
+                "  \"IsPayeeDefenseAttorney\": 0,  \n" +
+                "  \"IsPayeeClaimantAttorney\": 0, \n" +
+                "  \"PaymentReturnResPayId\": 4026, \n" +
+                "  \"RecoveryCheckNum\": \"4449\",\n" +
+                "  \"ChildLineGUID\": \"00000000-0000-0000-0000-000000000000\", \n" +
+                "  \"PaymentType\": 0\n" +
+                "}");
         assertNotEquals(result,"");
     }
 }
