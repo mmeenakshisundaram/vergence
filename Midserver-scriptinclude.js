@@ -74,7 +74,7 @@ FortegraUtil.prototype = {
             this.claimId = probe.getParameter("claimId");
             this.claimantGUID = probe.getParameter("claimantGUID");
             this.userguid = probe.getParameter("userguid");
-            var pgpObj = new this.PaymentRepo("test").updatePaymentForVoid(this.resPayId,
+            var pgpObj = new this.PaymentRepo("test").void_Claim_Payment(this.resPayId,
                                                                             this.claimId,
                                                                             this.claimantGUID,
                                                                             this.userguid
