@@ -51,8 +51,8 @@ public class PaymentRepositoryTest {
     void shouldVoidPayment() throws IOException, SQLException {
         PaymentRepository pr = new PaymentRepository("test");
         String result = pr.void_Claim_Payment(
-        304427,19672,
-        "15FD715F-7C52-45D9-8625-B1D3796B8A65",
+                303268,40945,
+        "329858C3-DD40-4043-8174-98C28D2FC634",
         "15779D93-532B-424C-9399-04BF6CDF0739");
         assertNotEquals(result,"");
     }

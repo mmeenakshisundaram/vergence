@@ -233,10 +233,23 @@ public class PaymentRepository {
             }
             debugMessage += "Existing payment Retrieved for the query -"+ Query  +"\n";
 
-
             if(!existingPayment.isEmpty()) {
 
-                //Step2: Call spClaims_InsertReservePayment
+                //Update void =1 for the existing payment
+                HashMap<String,Object> result_update = updatePaymentForVoid(
+                        connection,
+                        resPayId,
+                        existingPayment.get("CoverageTypeId") == null ? null: ((Integer)existingPayment.get("CoverageTypeId")),
+                        existingPayment.get("CoverageTypeDescriptionId") == null ? null: ((Integer)existingPayment.get("CoverageTypeDescriptionId")),
+                        (Integer) existingPayment.get("ResPayTypeId"),
+                        existingPayment.get("ResPaySubTypeId") == null ? null: ((Integer)existingPayment.get("ResPaySubTypeId")),
+                        ((BigDecimal)existingPayment.get("ResPayAmount")),
+                        existingPayment.get("Comments") == null ? null: ((String)existingPayment.get("Comments")),
+                        1
+                );
+                debugMessage +="Called updatePaymentForVoid." + result_update.getOrDefault("DebugMessage","") + "\n";
+
+                //Call Fortegra_InsertReservePayment to insert void records
                 HashMap<String,Object> result = insertClaims_ReservePayment(
                         connection,
                         (Integer) existingPayment.get("ClaimId"),
@@ -272,16 +285,21 @@ public class PaymentRepository {
                        (Integer)existingPayment.get("IsPayeeClaimantAttorney")
                 );
                 debugMessage +="Called insertClaims_ReservePayment." + result.getOrDefault("DebugMessage","") + "\n";
+                overAllResult.put("ResPayId", (Integer) result.getOrDefault("ResPayId", null));
 
+                //Query the offset payment for sending to servicenow
+                JSONObject offset_Record =  select_OffSet_PaymentRecord(connection,
+                        (Integer) result.getOrDefault("ResPayId", null));
+                overAllResult.put("OffsetVoid",offset_Record);
             }
-            //Step4: Commit the transaction
+            //Commit the transaction
             PreparedStatement pst_commit =
                     connection.prepareStatement("COMMIT");
             pst_commit.execute();
             debugMessage += "4.Commited Transaction...\n" ;
             connection.commit();
 
-            //Step4: Cleanup code
+            //Cleanup code
             pst_tran.close();
             pst_payment_existing.close();
             pst_commit.close();
@@ -410,6 +428,7 @@ public class PaymentRepository {
         return overAllResult.toString();
     }
 
+
     /*
      Calls stored procedure to insert
         1. Reserves
@@ -493,6 +512,46 @@ public class PaymentRepository {
         }
         catch(Exception ex){
             result.put("DebugMessage","Fortegra_InsertReservePayment failed with an error - "+ex.getCause().toString());
+        }
+        finally {
+            pst.close();
+        }
+        return result;
+    }
+
+    /*
+     Update payment record with void = 1
+     */
+    private HashMap<String,Object> updatePaymentForVoid(
+            Connection connection,
+            Integer ResPayId,
+            Integer CoverageTypeId,
+            Integer CoverageTypeDescriptionId,
+            Integer ResPayTypeId,
+            Integer ResPaySubTypeId,
+            BigDecimal ResPayAmount,
+            String Comments,
+            Integer Void
+    ) throws SQLException {
+        HashMap<String,Object> result = new HashMap<>();
+        PreparedStatement  pst =
+                connection.prepareStatement(
+                        "{call spClaims_UpdateReservePayment(?,?,?,?,?,?,?,?)}"
+                );
+        try {
+            pst.setInt(1, ResPayId);
+            pst.setObject(2, CoverageTypeId);
+            pst.setObject(3, CoverageTypeDescriptionId);
+            pst.setInt(4, ResPayTypeId);
+            pst.setObject(5, ResPaySubTypeId);
+            pst.setBigDecimal(6, ResPayAmount);
+            pst.setObject(7, Comments);
+            pst.setInt(8, Void);
+            pst.execute();
+            result.put("DebugMessage","spClaims_UpdateReservePayment executed successfully");
+        }
+        catch(Exception ex){
+            result.put("DebugMessage","spClaims_UpdateReservePayment failed with an error - "+ex.getCause().toString());
         }
         finally {
             pst.close();
@@ -605,6 +664,9 @@ public class PaymentRepository {
             result_offset_record.put("IsPayeeClaimantAttorney", rs.getObject("IsPayeeClaimantAttorney") == null ? null:  rs.getInt("IsPayeeClaimantAttorney"));
             result_offset_record.put("PaymentReturn_ResPayId", rs.getObject("PaymentReturn_ResPayId") == null ? null:  rs.getInt("PaymentReturn_ResPayId"));
             result_offset_record.put("RecoveryCheckNumber", rs.getObject("RecoveryCheckNumber") == null ? null:  rs.getString("RecoveryCheckNumber"));
+            result_offset_record.put("Void", rs.getInt("Void"));
+            result_offset_record.put("IsRecovery", rs.getInt("IsRecovery"));
+            result_offset_record.put("PaymentReturn", rs.getInt("PaymentReturn"));
             break;
         }
         return result_offset_record;
