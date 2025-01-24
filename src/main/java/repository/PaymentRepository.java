@@ -287,6 +287,34 @@ public class PaymentRepository {
                 debugMessage +="Called insertClaims_ReservePayment." + result.getOrDefault("DebugMessage","") + "\n";
                 overAllResult.put("ResPayId", (Integer) result.getOrDefault("ResPayId", null));
 
+                //Void Record
+                JSONObject result_void_record = new JSONObject();
+                result_void_record.put("RespayId",(Integer) result.getOrDefault("ResPayId", null));
+                result_void_record.put("ClaimId", (Integer) existingPayment.get("ClaimId"));
+                result_void_record.put("ClaimantGUID", (String) existingPayment.get("ClaimantGuid"));
+                result_void_record.put("CoverageTypeId", (Integer)existingPayment.get("CoverageTypeId"));
+                result_void_record.put("CoverageTypeDescriptionId", (Integer)existingPayment.get("CoverageTypeDescriptionId"));
+                result_void_record.put("ResPayTypeId", (Integer) existingPayment.get("ResPayTypeId"));
+                result_void_record.put("RespaySubTypeId", existingPayment.get("ResPaySubTypeId") );
+                result_void_record.put("ResPayAmount", ((BigDecimal)existingPayment.get("ResPayAmount")).multiply(BigDecimal.valueOf(-1)));
+                result_void_record.put("CreatedByGuid", (String) existingPayment.get("CreatedByGuid"));
+                result_void_record.put("Comments",((String)existingPayment.get("Comments")));
+                result_void_record.put("IsPayment", 1);
+                result_void_record.put("IsPaymentReduction", (Integer) existingPayment.get("IsPaymentReduction"));
+                result_void_record.put("PayeeGuid",(String) existingPayment.get("PayeeGuid") );
+                result_void_record.put("PayeeName",  (String) existingPayment.get("PayeeName"));
+                result_void_record.put("IsPayeeClaimant", (Integer) existingPayment.get("IsPayeeClaimant"));
+                result_void_record.put("IsPayeeInsured", (Integer) existingPayment.get("IsPayeeInsured"));
+                result_void_record.put("PaymentResPayId", ((Integer) existingPayment.get("PaymentResPayId")));
+                result_void_record.put("IsPayeeDefenseAttorney", (Integer)existingPayment.get("IsPayeeDefenseAttorney"));
+                result_void_record.put("IsPayeeClaimantAttorney", (Integer)existingPayment.get("IsPayeeClaimantAttorney"));
+                result_void_record.put("PaymentReturn_ResPayId", ((Integer) existingPayment.get("PaymentReturn_ResPayId")));
+                result_void_record.put("RecoveryCheckNumber", ((String) existingPayment.get("RecoveryCheckNumber")));
+                result_void_record.put("Void", 1);
+                result_void_record.put("IsRecovery", (Integer) existingPayment.get("IsRecovery"));
+                result_void_record.put("PaymentReturn", (Integer) existingPayment.get("PaymentReturn"));
+                overAllResult.put("Void",result_void_record);
+
                 //Query the offset payment for sending to servicenow
                 JSONObject offset_Record =  select_OffSet_PaymentRecord(connection,
                         (Integer) result.getOrDefault("ResPayId", null));
