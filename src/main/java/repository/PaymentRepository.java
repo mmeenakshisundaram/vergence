@@ -146,14 +146,14 @@ public class PaymentRepository {
      Transfer claim payment
      */
     public String transferClaimPayment(int resPayId,
-                                       String userguid) throws SQLException {
+                                       String userguid, int createCheck) throws SQLException {
         String debugMessage = "";
         JSONObject overAllResult = new JSONObject();
         try {
             Connection connection = DriverManager.getConnection(imsConnectionString);
             connection.setAutoCommit(false);
             String transferResult = invoke_spClaims_TransferPayment(connection,
-                    resPayId,userguid);
+                    resPayId,userguid,createCheck);
             connection.commit();
             connection.close();
             debugMessage += transferResult + "\n";
@@ -623,7 +623,7 @@ public class PaymentRepository {
     private String invoke_spClaims_TransferPayment(
             Connection connection,
             int resPayId,
-            String userguid) throws SQLException {
+            String userguid, int createCheck) throws SQLException {
         String result = "";
         try  {
             int bankgl = 0;
@@ -639,12 +639,13 @@ public class PaymentRepository {
 
             PreparedStatement pstmt =
                     connection.prepareStatement(
-                            "{call dbo.spClaims_TransferPayment(?,?,?)}"
+                            "{call dbo.spClaims_TransferPayment(?,?,?,?)}"
                     );
             if(bankgl > 0) {
                 pstmt.setInt(1, resPayId);
                 pstmt.setString(2, userguid);
                 pstmt.setInt(3, bankgl);
+                pstmt.setInt(4, createCheck);
                 pstmt.execute();
                 result += "Called invoke_spClaims_TransferPayment Stored Procedure...\n" ;
             }

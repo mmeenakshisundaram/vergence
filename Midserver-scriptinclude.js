@@ -57,9 +57,11 @@ FortegraUtil.prototype = {
 	transferPayment: function() {
          this.respayid = probe.getParameter("respayid");
          this.userguid = probe.getParameter("userguid");
+         this.createcheck = probe.getParameter("createcheck");
          var pgpObj = new this.PaymentRepo("test").transferClaimPayment(
                                                      this.respayid,
-                                                     this.userguid);
+                                                     this.userguid,
+                                                     this.createcheck);
          return pgpObj;
      },
 

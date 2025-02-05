@@ -10,6 +10,7 @@ probe.setName("IMS_TransferPayment");
 probe.setJavascript("var pdf = new FortegraUtil(); res = pdf.transferPayment();");
 probe.addParameter("respayid", inputs.respayid);
 probe.addParameter("userguid", inputs.userguid);
+probe.addParameter("createcheck", inputs.createcheck);
 var strOutputEccId = probe.create();
 
 var waitMS = 250000;
