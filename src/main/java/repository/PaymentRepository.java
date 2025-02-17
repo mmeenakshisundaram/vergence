@@ -109,6 +109,15 @@ public class PaymentRepository {
                         PaymentType);
                 debugMessage += result + "\n";
 
+                if(IsPayeeClaimant == 0 && IsPayeeInsured == 0 &&
+                        (IsPayeeDefenseAttorney == 1 || IsPayeeClaimantAttorney ==1)){
+                    JSONObject result_claimpayee = insertClaimsPayees(connection,
+                            (Integer) paymentResult.getOrDefault("ResPayId", null),
+                            IsPayeeInsured,
+                            PayeeGuid);
+                    overAllResult.put("InsertClaimPayee",result_claimpayee);
+                }
+
                 //Step4: Call invoke_spClaims_TransferPayment
 //                String transferResult = invoke_spClaims_TransferPayment(connection,
 //                        (Integer) paymentResult.getOrDefault("ResPayId", null),
@@ -421,7 +430,7 @@ public class PaymentRepository {
                     IsPayeeDefenseAttorney,
                     IsPayeeClaimantAttorney
             );
-            debugMessage += "Call to spClaims_InsertReservePayment completed."+ paymentResult.getOrDefault("DebugMessage","") + "\n";
+            debugMessage += "Call to Fortegra_InsertReservePayment completed."+ paymentResult.getOrDefault("DebugMessage","") + "\n";
             if(paymentResult.containsKey("ResPayId")) {
                 overAllResult.put("ResPayId", (Integer) paymentResult.getOrDefault("ResPayId", null));
 
@@ -699,5 +708,67 @@ public class PaymentRepository {
             break;
         }
         return result_offset_record;
+    }
+
+
+    /*
+     Calls stored procedure to insert
+        Claim payee
+     */
+    private JSONObject insertClaimsPayees(
+            Connection connection,
+            Integer ResPayId,
+            Integer IsInsured,
+            String PayeeGuid) throws SQLException {
+
+        JSONObject result = new JSONObject();
+        try
+        {
+            PreparedStatement pstmt_Select =
+                    connection.prepareStatement("SELECT temp.* FROM\n" +
+                            "(SELECT AttorneyGuid AS ExternalID,LawFirm AS Name,AttorneyName,AttorneyType,AttorneyEntityType,FEINSSN AS FEIN,Address1,City,State,ISOCountryCode,\n" +
+                            "ZipCode,PhoneNumber,FaxNumber,'' AS FirstName,'' AS LastName,'' AS SSN,'' AS EntityType,'' AS Company FROM lstClaims_Attorney \n" +
+                            "UNION SELECT AdjusterGuid AS ExternalID,CASE  WHEN EntityType = 'C' THEN Company  WHEN EntityType = 'I' THEN FirstName+' '+LastName     \n" +
+                            "END AS Name,'' AS AttorneyName,'' AS AttorneyType,'' AS AttorneyEntityType,FEIN,tblClaims_Addresses.Address1,tblClaims_Addresses.City,\n" +
+                            "tblClaims_Addresses.State,tblClaims_Addresses.ISOCountryCode,tblClaims_Addresses.ZipCode,'' AS PhoneNumber,'' AS FaxNumber,\n" +
+                            "FirstName,LastName,SSN,EntityType,Company FROM lstClaims_OutsideAdjusters inner join tblClaims_Addresses on lstClaims_OutsideAdjusters.Addressid = tblClaims_Addresses.Addressid) temp \n" +
+                            "where temp.ExternalID = '"+PayeeGuid+"'");
+            ResultSet rs = pstmt_Select.executeQuery();
+            PreparedStatement  pst =
+                    connection.prepareStatement(
+                            "{call spClaims_InsertClaimPayee(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)}"
+                    );
+            while (rs.next()) {
+
+                pst.setInt(1,ResPayId);
+                pst.setObject(2,null);
+                pst.setInt(3,0);
+                pst.setString(4,rs.getString("Name"));
+                pst.setString(5,rs.getString("Address1"));
+                pst.setString(6,null);
+                pst.setString(7,rs.getString("City"));
+                pst.setString(8,rs.getString("State"));
+                pst.setString(9,rs.getString("ZipCode"));
+                pst.setString(10,null);
+                pst.setInt(11,0);
+                pst.setString(12,null);
+                pst.setString(13,"ISOCountryCode");
+                pst.setString(14,null);
+                pst.setString(15,rs.getString("FEIN"));
+                pst.setString(16,rs.getString("SSN"));
+                pst.setInt(17,0);
+                pst.setTimestamp(18,null);
+                pst.setString(19,null);
+                pst.execute();
+                result.put("DebugMessage","spClaims_InsertClaimPayee executed successfully");
+                break;
+            }
+            pst.close();
+            pstmt_Select.close();
+        }
+        catch(Exception ex){
+            result.put("DebugMessage","spClaims_InsertClaimPayee failed with an error - "+ex.getCause().toString());
+        }
+        return result;
     }
 }

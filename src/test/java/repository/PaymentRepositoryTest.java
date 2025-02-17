@@ -17,17 +17,17 @@ public class PaymentRepositoryTest {
     void shouldInsertClaimPayment() throws IOException {
         PaymentRepository pr = new PaymentRepository("test");
         String result = pr.insertClaimPayment("{\n" +
-                "  \"ClaimId\": 41970,\n" +
-                "  \"ClaimantGuid\": \"810A04AC-82BD-45C0-A6E5-003F7E963754\",\n" +
-                "  \"CoverageTypeId\": 5,\n" +
+                "  \"ClaimId\": 21510,\n" +
+                "  \"ClaimantGuid\": \"20678E0D-A452-4FB5-A479-FE3843BA79AF\",\n" +
+                "  \"CoverageTypeId\": 4,\n" +
                 "  \"CoverageTypeDescriptionId\": null,\n" +
-                "  \"ResPayTypeId\": 3,\n" +
+                "  \"ResPayTypeId\": 2,\n" +
                 "  \"ResPaySubTypeId\": null,\n" +
-                "  \"ResPayAmount\": \"12.52\",\n" +
-                "  \"CreatedByGuid\": \"810A04AC-82BD-45C0-A6E5-003F7E963754\",\n" +
-                "  \"Comments\":\"Test\",\n" +
-                "  \"PayeeGuid\": \"810A04AC-82BD-45C0-A6E5-003F7E963754\",\n" +
-                "  \"PayeeName\": \"Test\",\n" +
+                "  \"ResPayAmount\": \"3\",\n" +
+                "  \"CreatedByGuid\": \"B19BE45A-B0EF-4182-892A-3D6C095640FF\",\n" +
+                "  \"Comments\":\"Please include this on the memo.\",\n" +
+                "  \"PayeeGuid\": \"754CEDA2-DCC0-4524-9706-0F846983A998\",\n" +
+                "  \"PayeeName\": \"Wingate Russotti Shapiro Moses & Halperin, LLP\",\n" +
                 "  \"IsPayeeClaimant\": 0,\n" +
                 "  \"IsPayeeInsured\": 0,\n" +
                 "  \"AdditionalPayees\": null,\n" +
@@ -39,10 +39,10 @@ public class PaymentRepositoryTest {
                 "  \"Override_ISOCountryCode\": null,  \n" +
                 "  \"dateCreated\": null,  \n" +
                 "  \"PaymentResPayId\": null,  \n" +
-                "  \"IsPayeeDefenseAttorney\": 0,  \n" +
+                "  \"IsPayeeDefenseAttorney\": 1,  \n" +
                 "  \"IsPayeeClaimantAttorney\": 0, \n" +
                 "  \"ChildLineGUID\": \"00000000-0000-0000-0000-000000000000\", \n" +
-                "  \"PaymentType\": 0\n" +
+                "  \"PaymentType\": 1\n" +
                 "}");
         assertNotEquals(result,"");
     }
