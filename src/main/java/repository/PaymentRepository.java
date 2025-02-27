@@ -110,7 +110,7 @@ public class PaymentRepository {
                 debugMessage += result + "\n";
 
                 if(IsPayeeClaimant == 0 && IsPayeeInsured == 0 &&
-                        (IsPayeeDefenseAttorney == 1 || IsPayeeClaimantAttorney ==1)){
+                        (IsPayeeDefenseAttorney == 0 && IsPayeeClaimantAttorney == 0)){
                     JSONObject result_claimpayee = insertClaimsPayees(connection,
                             (Integer) paymentResult.getOrDefault("ResPayId", null),
                             IsPayeeInsured,
@@ -726,12 +726,10 @@ public class PaymentRepository {
         {
             PreparedStatement pstmt_Select =
                     connection.prepareStatement("SELECT temp.* FROM\n" +
-                            "(SELECT AttorneyGuid AS ExternalID,LawFirm AS Name,AttorneyName,AttorneyType,AttorneyEntityType,FEINSSN AS FEIN,Address1,City,State,ISOCountryCode,\n" +
-                            "ZipCode,PhoneNumber,FaxNumber,'' AS FirstName,'' AS LastName,'' AS SSN,'' AS EntityType,'' AS Company FROM lstClaims_Attorney \n" +
-                            "UNION SELECT AdjusterGuid AS ExternalID,CASE  WHEN EntityType = 'C' THEN Company  WHEN EntityType = 'I' THEN FirstName+' '+LastName     \n" +
+                            "(SELECT AdjusterGuid AS ExternalID,CASE  WHEN EntityType = 'C' THEN Company  WHEN EntityType = 'I' THEN FirstName+' '+LastName     \n" +
                             "END AS Name,'' AS AttorneyName,'' AS AttorneyType,'' AS AttorneyEntityType,FEIN,tblClaims_Addresses.Address1,tblClaims_Addresses.City,\n" +
                             "tblClaims_Addresses.State,tblClaims_Addresses.ISOCountryCode,tblClaims_Addresses.ZipCode,'' AS PhoneNumber,'' AS FaxNumber,\n" +
-                            "FirstName,LastName,SSN,EntityType,Company FROM lstClaims_OutsideAdjusters inner join tblClaims_Addresses on lstClaims_OutsideAdjusters.Addressid = tblClaims_Addresses.Addressid) temp \n" +
+                            "FirstName,LastName,SSN,EntityType,Company FROM lstClaims_OutsideAdjusters left join tblClaims_Addresses on lstClaims_OutsideAdjusters.Addressid = tblClaims_Addresses.Addressid) temp \n" +
                             "where temp.ExternalID = '"+PayeeGuid+"'");
             ResultSet rs = pstmt_Select.executeQuery();
             PreparedStatement  pst =
@@ -742,7 +740,7 @@ public class PaymentRepository {
 
                 pst.setInt(1,ResPayId);
                 pst.setObject(2,null);
-                pst.setInt(3,0);
+                pst.setInt(3,IsInsured);
                 pst.setString(4,rs.getString("Name"));
                 pst.setString(5,rs.getString("Address1"));
                 pst.setString(6,null);

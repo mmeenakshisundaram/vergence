@@ -17,8 +17,8 @@ public class PaymentRepositoryTest {
     void shouldInsertClaimPayment() throws IOException {
         PaymentRepository pr = new PaymentRepository("test");
         String result = pr.insertClaimPayment("{\n" +
-                "  \"ClaimId\": 21510,\n" +
-                "  \"ClaimantGuid\": \"20678E0D-A452-4FB5-A479-FE3843BA79AF\",\n" +
+                "  \"ClaimId\": 24093,\n" +
+                "  \"ClaimantGuid\": \"45EA7CEE-8358-4D3C-9764-B0C289AC6B42\",\n" +
                 "  \"CoverageTypeId\": 4,\n" +
                 "  \"CoverageTypeDescriptionId\": null,\n" +
                 "  \"ResPayTypeId\": 2,\n" +
@@ -26,7 +26,7 @@ public class PaymentRepositoryTest {
                 "  \"ResPayAmount\": \"3\",\n" +
                 "  \"CreatedByGuid\": \"B19BE45A-B0EF-4182-892A-3D6C095640FF\",\n" +
                 "  \"Comments\":\"Please include this on the memo.\",\n" +
-                "  \"PayeeGuid\": \"754CEDA2-DCC0-4524-9706-0F846983A998\",\n" +
+                "  \"PayeeGuid\": \"201EFB80-0461-449E-A973-DA97A136F98A\",\n" +
                 "  \"PayeeName\": \"Wingate Russotti Shapiro Moses & Halperin, LLP\",\n" +
                 "  \"IsPayeeClaimant\": 0,\n" +
                 "  \"IsPayeeInsured\": 0,\n" +
@@ -39,7 +39,7 @@ public class PaymentRepositoryTest {
                 "  \"Override_ISOCountryCode\": null,  \n" +
                 "  \"dateCreated\": null,  \n" +
                 "  \"PaymentResPayId\": null,  \n" +
-                "  \"IsPayeeDefenseAttorney\": 1,  \n" +
+                "  \"IsPayeeDefenseAttorney\": 0,  \n" +
                 "  \"IsPayeeClaimantAttorney\": 0, \n" +
                 "  \"ChildLineGUID\": \"00000000-0000-0000-0000-000000000000\", \n" +
                 "  \"PaymentType\": 1\n" +
