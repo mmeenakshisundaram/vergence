@@ -32,7 +32,7 @@ public class CommonUtil {
 
     static {
         appConfig = new HashMap<String,String>();
-        appConfig.put("test_imsconnectionstring","jdbc:sqlserver://MGADSTest01.ny.mgasystems.com:1433;database=Fortegra_Dev;user=mperkins@fortegra.com_DBO;password=the2.sofa.chanted.a5.ragnet.relieves.a.sTump;");
+        appConfig.put("test_imsconnectionstring","jdbc:sqlserver://mgadstest03.ny.mgasystems.com:1433;database=Fortegra_Test;user=svc_acct_ims_prod;password=His.country9.voiced.Snider4.will.bake.your.bat;");
         appConfig.put("prod_imsconnectionstring","jdbc:sqlserver://MGADS0002-NJ.NY.MGASYSTEMS.COM:1433;database=Fortegra;user=svc_acct_ims_prod;password=a.yin.snorTed.the2.devil3.popped.the.plaything;");
     }
 
