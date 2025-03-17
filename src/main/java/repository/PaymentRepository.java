@@ -1,11 +1,13 @@
 package repository;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 import util.CommonUtil;
 
 import java.lang.ref.Reference;
 import java.math.BigDecimal;
 import java.sql.*;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Hashtable;
 
@@ -720,7 +722,6 @@ public class PaymentRepository {
             Integer ResPayId,
             Integer IsInsured,
             String PayeeGuid) throws SQLException {
-
         JSONObject result = new JSONObject();
         try
         {
@@ -769,4 +770,45 @@ public class PaymentRepository {
         }
         return result;
     }
+
+    /*
+     Returns the reserve summary for a particular claimid
+     */
+    public String getReserveSummary(int claimId) throws SQLException {
+        Connection connection = DriverManager.getConnection(imsConnectionString);
+        JSONObject result = new JSONObject();
+        try
+        {
+            PreparedStatement pstmt_Select =
+                    connection.prepareStatement(
+                            "SELECT ClaimantGuid,ResPayTypeId,ResPaySubTypeId,\n" +
+                                    "    SUM(CASE WHEN ispayment=0 and ispaymentreduction=0 and void = 0 and isrecovery =0 THEN respayamount ELSE 0 END) AS TotalIncurred,\n" +
+                                    "    SUM(CASE WHEN ispayment=1 THEN respayamount ELSE 0 END) AS TotalPaid,\n" +
+                                    "    SUM(CASE WHEN (ispayment=0 and ispaymentreduction=0 and void = 0 and isrecovery =0 and PaymentReturn =0) \n" +
+                                    "        or Ispaymentreduction=1 THEN respayamount ELSE 0 END) AS RemainingReserve\n" +
+                                    "    FROM tblClaims_ReservePayments where claimid = "+claimId+"  group by ClaimantGuid, ResPayTypeId,ResPaySubTypeId");
+            ResultSet rs = pstmt_Select.executeQuery();
+            JSONArray objArr = new JSONArray();
+            while (rs.next()) {
+                HashMap<String,String> reservesummary = new HashMap<>();
+                reservesummary.put("ClaimantGuid", rs.getString("ClaimantGuid"));
+                reservesummary.put("ResPayTypeId", rs.getString("ResPayTypeId"));
+                reservesummary.put("ResPaySubTypeId", rs.getString("ResPaySubTypeId") == null ? "NULL" : rs.getString("ResPaySubTypeId"));
+                reservesummary.put("TotalIncurred", rs.getString("TotalIncurred"));
+                reservesummary.put("TotalPaid", rs.getString("TotalPaid"));
+                reservesummary.put("RemainingReserve", rs.getString("RemainingReserve"));
+                objArr.put(reservesummary);
+            }
+            result.put("ClaimId",claimId);
+            result.put("ReserveSummary",objArr);
+            result.put("DebugMessage","");
+            pstmt_Select.close();
+            connection.close();
+        }
+        catch(Exception ex){
+            result.put("DebugMessage","getReserveSummary failed with an error - "+ex.getCause().toString());
+        }
+        return result.toString();
+    }
+
 }

@@ -107,4 +107,11 @@ public class PaymentRepositoryTest {
 
         assertNotEquals(result,"");
     }
+
+    @Test
+    void shouldgetReserveSummary() throws IOException, SQLException {
+        PaymentRepository pr = new PaymentRepository("test");
+        String result = pr.getReserveSummary(54162);
+        assertNotEquals(result,"");
+    }
 }

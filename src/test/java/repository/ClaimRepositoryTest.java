@@ -38,13 +38,13 @@ public class ClaimRepositoryTest {
     @Test
     void shouldInsertAccidentInformation() throws IOException, SQLException {
         String connectionUrl =
-                "jdbc:sqlserver://MGADSTest01.ny.mgasystems.com:1433;"
+                "jdbc:sqlserver://mgadstest03.ny.mgasystems.com:1433;"
                         + "database=Fortegra_Test;"
-                        + "user=mperkins@fortegra.com_DBO;"
-                        + "password=the2.sofa.chanted.a5.ragnet.relieves.a.sTump;";
+                        + "user=svc_acct_ims_prod;"
+                        + "password=His.country9.voiced.Snider4.will.bake.your.bat;";
         ClaimRepository pr = new ClaimRepository("test");
         String result = pr.insertAccidentInformation("{\n" +
-                "  \"ClaimId\": 1239,\n" +
+                "  \"ClaimId\": 1237,\n" +
                 "  \"Address1\": \"test\",\n" +
                 "  \"City\": \"test\",\n" +
                 "  \"State\": \"test\",\n" +
