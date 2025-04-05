@@ -34,11 +34,12 @@ FortegraUtil.prototype = {
 		this.sharepointToken = probe.getParameter("sharepointToken");
 		this.folderName = probe.getParameter("folderName");
 		this.driveId = probe.getParameter("driveId");
+		this.tag = probe.getParameter("tag");
         var pgpObj = new this.Pgp().transferdocument(this.documentStoreGUID,
 													this.imsConnectionString,
 													this.sharepointToken,
 													this.folderName,
-													this.driveId);
+													this.driveId,this.tag);
 		return pgpObj;
     },
 

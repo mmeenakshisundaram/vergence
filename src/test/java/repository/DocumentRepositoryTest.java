@@ -29,14 +29,13 @@ public class DocumentRepositoryTest {
                 "eKR8Q~Oo9wfEjZ8hUEUV4D2Z-zaCa1IFsRXZXcdj",
                 "https://graph.microsoft.com/.default",
                 "e49e9863-0f2e-4860-891b-48221b674dc2");
-        String connectionUrl = "jdbc:sqlserver://MGADSTest01.ny.mgasystems.com:1433;"
-                + "database=Fortegra_Test;"
-                + "user=mperkins@fortegra.com_DBO;"
-                + "password=the2.sofa.chanted.a5.ragnet.relieves.a.sTump;";
-         cu.transferdocument("00AE87B5-FF65-44AA-A1CA-4404D621FA07",
-            connectionUrl,token,"abc/pdf","b!AXAKxzJkf02Shd-28ta_4kxl-h-3llJFvPvbCNsmniWUXHmML35hQZKP5y87-lge");
-
-
+        String connectionUrl = cu.appConfig.get("test_imsconnectionstring");
+        String resp = cu.transferdocument("be392212-c92d-4fd1-983b-f95224a9fa6d",
+            connectionUrl,
+                 token,
+                 "abc/pdf",
+                 "b!AXAKxzJkf02Shd-28ta_4kxl-h-3llJFvPvbCNsmniWUXHmML35hQZKP5y87-lge","abcd");
+        assertNotEquals(resp,"");
     }
 
     @Test
@@ -47,12 +46,12 @@ public class DocumentRepositoryTest {
                 "eKR8Q~Oo9wfEjZ8hUEUV4D2Z-zaCa1IFsRXZXcdj",
                 "https://graph.microsoft.com/.default",
                 "e49e9863-0f2e-4860-891b-48221b674dc2");
-        String connectionUrl = "jdbc:sqlserver://MGADSTest01.ny.mgasystems.com:1433;"
-                + "database=Fortegra_Test;"
-                + "user=mperkins@fortegra.com_DBO;"
-                + "password=the2.sofa.chanted.a5.ragnet.relieves.a.sTump;";
+        String connectionUrl = cu.appConfig.get("prod_imsconnectionstring");
         cu.transferdocument("83479256-4A5D-44C2-9B1A-A94D0E993B32",
-                connectionUrl,token, "SPC0113310","b!AXAKxzJkf02Shd-28ta_4kxl-h-3llJFvPvbCNsmniWLpr0OUNekQJ3GJWzOf4br");
+                connectionUrl,
+                token,
+                "SPC0113310",
+                "b!AXAKxzJkf02Shd-28ta_4kxl-h-3llJFvPvbCNsmniWLpr0OUNekQJ3GJWzOf4br","");
 
     }
 

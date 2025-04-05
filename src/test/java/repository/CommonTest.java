@@ -17,4 +17,11 @@ public class CommonTest {
         String re = cu.cleanMidServer("Fortegra",true);
         System.out.println(re);
     }
+
+    @Test
+    void shouldLog() throws IOException {
+        CommonUtil cu = new CommonUtil();
+        int result = cu.snLog("TestSrc","TestMessage");
+        System.out.println(result);
+    }
 }

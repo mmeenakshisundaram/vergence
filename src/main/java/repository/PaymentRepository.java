@@ -4,6 +4,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import util.CommonUtil;
 
+import java.io.IOException;
 import java.lang.ref.Reference;
 import java.math.BigDecimal;
 import java.sql.*;
@@ -64,7 +65,7 @@ public class PaymentRepository {
             pst_tran.execute();
             debugMessage += "Transaction Started...\n";
 
-            //Step2: Call spClaims_InsertReservePayment
+            //Step2: Call Fortegra_InsertCustomReservePaymentData
             HashMap<String,Object> paymentResult = insertClaims_ReservePayment(
                     connection,
                     ClaimId,
@@ -105,11 +106,12 @@ public class PaymentRepository {
 
                 overAllResult.put("ResPayId", (Integer) paymentResult.getOrDefault("ResPayId", null));
 
+                //Inserting childline for payment record
                 String result = insert_Fortegra_CustomChildLine(connection,
                         (Integer) paymentResult.getOrDefault("ResPayId", null),
                         ChildLineGUID,
                         PaymentType);
-                debugMessage += result + "\n";
+                debugMessage += "Inserting childline for payment record - "+ result + "\n";
 
                 if(IsPayeeClaimant == 0 && IsPayeeInsured == 0 &&
                         (IsPayeeDefenseAttorney == 0 && IsPayeeClaimantAttorney == 0)){
@@ -131,6 +133,13 @@ public class PaymentRepository {
                 JSONObject offset_Record =  select_OffSet_PaymentRecord(connection,
                         (Integer) paymentResult.getOrDefault("ResPayId", null));
                 overAllResult.put("OffsetPayment",offset_Record);
+
+                //Inserting childline for payment offset record
+                String result_1 = insert_Fortegra_CustomChildLine(connection,
+                        offset_Record.getInt("RespayId"),
+                        ChildLineGUID,
+                        PaymentType);
+                debugMessage += "Inserting childline for payment offset record - "+ result_1 + "\n";
             }
 
             PreparedStatement pstmt_commit =  connection.prepareStatement("COMMIT");
@@ -186,10 +195,13 @@ public class PaymentRepository {
             int resPayId,
             int claimId,
             String claimantGUID,
-            String userguid) throws SQLException {
+            String userguid, String childLine) throws SQLException, IOException {
         JSONObject overAllResult = new JSONObject();
         String debugMessage = "";
+        CommonUtil cu = new CommonUtil();
+
         try  {
+            cu.snLog("test_mid_server","Void claim payment started for Respayid - " +resPayId+ "Claimid - "+ claimId);
             Connection connection = DriverManager.getConnection(imsConnectionString);
             connection.setAutoCommit(false);
 
@@ -243,6 +255,7 @@ public class PaymentRepository {
                 break;
             }
             debugMessage += "Existing payment Retrieved for the query -"+ Query  +"\n";
+            cu.snLog("test_mid_server","Existing payment Retrieved for the query -"+ Query);
 
             if(!existingPayment.isEmpty()) {
 
@@ -259,6 +272,7 @@ public class PaymentRepository {
                         1
                 );
                 debugMessage +="Called updatePaymentForVoid." + result_update.getOrDefault("DebugMessage","") + "\n";
+                cu.snLog("test_mid_server","Called updatePaymentForVoid for updating the existing payment with void =1." + result_update.getOrDefault("DebugMessage","") );
 
                 //Call Fortegra_InsertReservePayment to insert void records
                 HashMap<String,Object> result = insertClaims_ReservePayment(
@@ -297,6 +311,7 @@ public class PaymentRepository {
                 );
                 debugMessage +="Called insertClaims_ReservePayment." + result.getOrDefault("DebugMessage","") + "\n";
                 overAllResult.put("ResPayId", (Integer) result.getOrDefault("ResPayId", null));
+                cu.snLog("test_mid_server","Called insertClaims_ReservePayment for inserting void and void offset." + result.getOrDefault("DebugMessage",""));
 
                 //Void Record
                 JSONObject result_void_record = new JSONObject();
@@ -330,12 +345,28 @@ public class PaymentRepository {
                 JSONObject offset_Record =  select_OffSet_PaymentRecord(connection,
                         (Integer) result.getOrDefault("ResPayId", null));
                 overAllResult.put("OffsetVoid",offset_Record);
+
+                //Inserting child line for void record
+                String result_1 = insert_Fortegra_CustomChildLine(connection,
+                        (Integer) result.getOrDefault("ResPayId", null),
+                        childLine,
+                        null);
+                debugMessage += "Inserting child line for void record - " + result_1 + "\n";
+                cu.snLog("test_mid_server","Inserting child line for void offset record - " +  result_1);
+                //Inserting child line for void offset record
+                String result_2 = insert_Fortegra_CustomChildLine(connection,
+                        offset_Record.getInt("RespayId"),
+                        childLine,
+                        null);
+                debugMessage += "Inserting child line for void offset record - " +  result_2 + "\n";
+                cu.snLog("test_mid_server","Inserting child line for void offset record - " +  result_2);
             }
             //Commit the transaction
             PreparedStatement pst_commit =
                     connection.prepareStatement("COMMIT");
             pst_commit.execute();
             debugMessage += "4.Commited Transaction...\n" ;
+            cu.snLog("test_mid_server","Committed the transaction for Respayid - " +resPayId+ "Claimid - "+ claimId);
             connection.commit();
 
             //Cleanup code
@@ -466,7 +497,6 @@ public class PaymentRepository {
         }
         return overAllResult.toString();
     }
-
 
     /*
      Calls stored procedure to insert

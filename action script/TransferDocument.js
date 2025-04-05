@@ -13,6 +13,7 @@ probe.addParameter("imsConnectionString",inputs.imsConnectionString);
 probe.addParameter("sharepointToken", inputs.sharepointToken );
 probe.addParameter("folderName", inputs.folderName);
 probe.addParameter("driveId", inputs.driveId);
+probe.addParameter("tag", inputs.tag);
 var strOutputEccId = probe.create();
 
 var waitMS = 250000;

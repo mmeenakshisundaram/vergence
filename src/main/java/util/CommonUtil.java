@@ -17,6 +17,9 @@ import org.apache.http.util.EntityUtils;
 import org.json.JSONObject;
 import javax.xml.bind.DatatypeConverter;
 import java.io.*;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -50,7 +53,7 @@ public class CommonUtil {
             String imsConnectionString,
             String sharepointToken,
             String folderName,
-            String driveId) {
+            String driveId,String tag) {
 
         String tempPath = System.getProperty("java.io.tmpdir")+"Fortegra\\";
         JSONObject overlAllResult = new JSONObject();
@@ -96,6 +99,20 @@ public class CommonUtil {
                 if (directoryListing != null) {
                     for (File child : directoryListing) {
                         String filename = child.getName().replaceAll("[^a-zA-Z0-9\\.\\-]", "_");
+                        //This has been added as per andrew's business rule - Upload document to sharepoint
+                        if(tag != null || !tag.isEmpty()){
+                            String filenamewithoutextn = "";
+                            String extn = "";
+                            int lastDotIndex = child.getName().lastIndexOf(".");
+                            if (lastDotIndex == -1) {
+                                filenamewithoutextn = child.getName();
+                            }
+                            else {
+                                filenamewithoutextn = child.getName().substring(0, lastDotIndex);
+                                extn = child.getName().substring(lastDotIndex + 1);
+                            }
+                            filename = filenamewithoutextn.replaceAll("/\\.[^.]*$|\\/+/g", "")+"("+tag+")"+"."+extn;
+                        }
                         HttpPut putRequest_data =
                                 new HttpPut("https://graph.microsoft.com/v1.0/drives/" +
                                         driveId + "/root:/"+folderName+"/"+filename+":/content");
@@ -272,5 +289,27 @@ public class CommonUtil {
             overlAllResult.put("Error2",  ex.getStackTrace() +  ex.getCause().toString());
             return overlAllResult.toString();
         }
+    }
+
+    public int snLog(String srcSystem, String Message) throws IOException {
+        // API URL
+        URL url = new URL("https://ftgtest.service-now.com/api/x_fof_spc/ims_log/1");
+        // Open connection
+        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+        // Set request method
+        connection.setRequestMethod("POST");
+        connection.setDoOutput(true);
+        // Set headers
+        connection.setRequestProperty("Content-Type", "application/json");
+        // JSON Payload
+        String jsonPayload = "{ \"Name\":  \""+ srcSystem +"\","+"\"Message\":  \""+ Message +"\" }";
+        // Write data to request body
+        try (OutputStream os = connection.getOutputStream()) {
+            byte[] input = jsonPayload.getBytes("utf-8");
+            os.write(input, 0, input.length);
+        }
+        // Get response code
+        int responseCode = connection.getResponseCode();
+        return responseCode;
     }
 }

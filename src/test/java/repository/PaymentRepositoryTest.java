@@ -17,19 +17,19 @@ public class PaymentRepositoryTest {
     void shouldInsertClaimPayment() throws IOException {
         PaymentRepository pr = new PaymentRepository("test");
         String result = pr.insertClaimPayment("{\n" +
-                "  \"ClaimId\": 24093,\n" +
-                "  \"ClaimantGuid\": \"45EA7CEE-8358-4D3C-9764-B0C289AC6B42\",\n" +
-                "  \"CoverageTypeId\": 4,\n" +
+                "  \"ClaimId\": 55859,\n" +
+                "  \"ClaimantGuid\": \"B7D30CD9-1EE5-43C4-8321-6763EA0FDE5F\",\n" +
+                "  \"CoverageTypeId\": null,\n" +
                 "  \"CoverageTypeDescriptionId\": null,\n" +
                 "  \"ResPayTypeId\": 2,\n" +
                 "  \"ResPaySubTypeId\": null,\n" +
-                "  \"ResPayAmount\": \"3\",\n" +
+                "  \"ResPayAmount\": \"200\",\n" +
                 "  \"CreatedByGuid\": \"B19BE45A-B0EF-4182-892A-3D6C095640FF\",\n" +
                 "  \"Comments\":\"Please include this on the memo.\",\n" +
                 "  \"PayeeGuid\": \"201EFB80-0461-449E-A973-DA97A136F98A\",\n" +
                 "  \"PayeeName\": \"Wingate Russotti Shapiro Moses & Halperin, LLP\",\n" +
-                "  \"IsPayeeClaimant\": 0,\n" +
-                "  \"IsPayeeInsured\": 0,\n" +
+                "  \"IsPayeeClaimant\": 1,\n" +
+                "  \"IsPayeeInsured\": 1,\n" +
                 "  \"AdditionalPayees\": null,\n" +
                 "  \"Override_Address1\": null,\n" +
                 "  \"Override_Address2\": null,\n" +
@@ -41,7 +41,7 @@ public class PaymentRepositoryTest {
                 "  \"PaymentResPayId\": null,  \n" +
                 "  \"IsPayeeDefenseAttorney\": 0,  \n" +
                 "  \"IsPayeeClaimantAttorney\": 0, \n" +
-                "  \"ChildLineGUID\": \"00000000-0000-0000-0000-000000000000\", \n" +
+                "  \"ChildLineGUID\": \"DF49CDBD-71E6-4AA7-B1D9-172631437980\", \n" +
                 "  \"PaymentType\": 1\n" +
                 "}");
         assertNotEquals(result,"");
@@ -51,9 +51,10 @@ public class PaymentRepositoryTest {
     void shouldVoidPayment() throws IOException, SQLException {
         PaymentRepository pr = new PaymentRepository("test");
         String result = pr.void_Claim_Payment(
-                303268,40945,
-        "329858C3-DD40-4043-8174-98C28D2FC634",
-        "15779D93-532B-424C-9399-04BF6CDF0739");
+                423092,55859,
+        "B7D30CD9-1EE5-43C4-8321-6763EA0FDE5F",
+        "15779D93-532B-424C-9399-04BF6CDF0739",
+                "DF49CDBD-71E6-4AA7-B1D9-172631437980");
         assertNotEquals(result,"");
     }
 
