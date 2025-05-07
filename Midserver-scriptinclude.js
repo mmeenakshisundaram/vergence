@@ -10,6 +10,7 @@ FortegraUtil.prototype = {
 		this.PaymentRepo = Packages.repository.PaymentRepository;
 		this.Pgp = Packages.util.CommonUtil;
 		this.ClaimRepo = Packages.repository.ClaimRepository;
+		this.CCRepo = Packages.repository.CCRepository;
     },
 
     getAccessToken: function() {
@@ -89,7 +90,16 @@ FortegraUtil.prototype = {
              this.input = probe.getParameter("claimId");
              var pgpObj = new this.PaymentRepo("test").getReserveSummary(this.input);
              return pgpObj;
-         },
+      },
+
+       download8x8File: function() {
+                    this.objectid = probe.getParameter("objectid");
+                    this.authtoken = probe.getParameter("authtoken");
+                    this.odate = probe.getParameter("odate");
+                    var pgpObj = new this.CCRepo("test").download8x8File(this.objectid,
+                     this.authtoken,this.odate);
+                    return pgpObj;
+                },
 
     type: FortegraUtil
 };

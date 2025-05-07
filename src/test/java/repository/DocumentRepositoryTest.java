@@ -34,7 +34,8 @@ public class DocumentRepositoryTest {
             connectionUrl,
                  token,
                  "abc/pdf",
-                 "b!AXAKxzJkf02Shd-28ta_4kxl-h-3llJFvPvbCNsmniWUXHmML35hQZKP5y87-lge","abcd");
+                 "b!AXAKxzJkf02Shd-28ta_4kxl-h-3llJFvPvbCNsmniWUXHmML35hQZKP5y87-lge",
+                "e519348c97fc2210bddf36c71153afc0");
         assertNotEquals(resp,"");
     }
 

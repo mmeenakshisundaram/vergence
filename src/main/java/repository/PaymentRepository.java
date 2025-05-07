@@ -414,8 +414,8 @@ public class PaymentRepository {
         Integer PaymentResPayId = inputObj.get("PaymentResPayId") == JSONObject.NULL ? null: (Integer)inputObj.get("PaymentResPayId");
         Integer PaymentReturnResPayId = inputObj.get("PaymentReturnResPayId") == JSONObject.NULL ? null: (Integer)inputObj.get("PaymentReturnResPayId");
         String RecoveryCheckNum = inputObj.get("RecoveryCheckNum") == JSONObject.NULL ? null: (String)inputObj.get("RecoveryCheckNum");
-        Integer IsPayeeDefenseAttorney=(Integer) inputObj.get("IsPayeeDefenseAttorney");
-        Integer IsPayeeClaimantAttorney=(Integer) inputObj.get("IsPayeeClaimantAttorney");
+        Integer IsPayeeDefenseAttorney=inputObj.get("IsPayeeDefenseAttorney")== JSONObject.NULL ? 0: (Integer) inputObj.get("IsPayeeDefenseAttorney");
+        Integer IsPayeeClaimantAttorney=inputObj.get("IsPayeeClaimantAttorney")== JSONObject.NULL ? 0:(Integer) inputObj.get("IsPayeeClaimantAttorney");
         String ChildLineGUID= inputObj.get("ChildLineGUID") == JSONObject.NULL ? null: (String)inputObj.get("ChildLineGUID");
         Integer PaymentType= inputObj.get("PaymentType") == JSONObject.NULL ? null: (Integer)inputObj.get("PaymentType");
         String debugMessage = "";
